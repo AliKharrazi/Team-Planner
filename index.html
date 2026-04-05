@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STP Planning Suite</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1a2744;
+  --navy-light: #253658;
+  --green: #8cc63f;
+  --teal: #00a5b5;
+  --bg: #f4f5f7;
+  --text: #1a2744;
+  --text-dim: #5a6a85;
+  --border: #d4d8e1;
+  --radius: 10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Source Sans Pro', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.header {
+  background: var(--navy);
+  padding: 0;
+}
+.header-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 32px 36px;
+}
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.logo {
+  width: 44px; height: 44px;
+  background: var(--green);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 16px; color: var(--navy);
+  font-family: 'Montserrat', sans-serif;
+}
+.brand { font-size: 14px; color: rgba(255,255,255,0.5); font-weight: 500; }
+.header h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+.header h1 span {
+  display: block;
+  color: var(--green);
+}
+.header p {
+  margin-top: 12px;
+  font-size: 16px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.6;
+  max-width: 600px;
+}
+.green-bar {
+  height: 4px;
+  background: var(--green);
+}
+
+/* MAIN */
+.main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 32px 60px;
+  flex: 1;
+  width: 100%;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(26,39,68,0.12);
+}
+.card-banner {
+  height: 8px;
+  width: 100%;
+}
+.card-body {
+  padding: 28px 28px 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.card-icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  margin-bottom: 18px;
+}
+.card h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+.card p {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.6;
+  flex: 1;
+}
+.card-features {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.card-tag {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--bg);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.card-footer {
+  padding: 16px 28px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-link {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Montserrat', sans-serif;
+}
+.card-link .arrow {
+  display: inline-flex;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: transform 0.2s;
+}
+.card:hover .card-link .arrow { transform: translateX(3px); }
+
+/* Card 1 - Roadmap */
+.card-roadmap .card-banner { background: linear-gradient(90deg, var(--navy), var(--navy-light)); }
+.card-roadmap .card-icon { background: rgba(26,39,68,0.08); color: var(--navy); }
+.card-roadmap .card-link .arrow { background: rgba(26,39,68,0.08); color: var(--navy); }
+
+/* Card 2 - Weekly */
+.card-weekly .card-banner { background: linear-gradient(90deg, var(--green), var(--teal)); }
+.card-weekly .card-icon { background: rgba(140,198,63,0.1); color: #5e8a1e; }
+.card-weekly .card-link .arrow { background: rgba(140,198,63,0.1); color: #5e8a1e; }
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+}
+
+@media (max-width: 700px) {
+  .cards { grid-template-columns: 1fr; }
+  .header h1 { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="logo">STP</div>
+      <span class="brand">AusNet Services</span>
+    </div>
+    <h1>Planning <span>Suite</span></h1>
+    <p>Sub-Transmission Planning team tools for CY2026 roadmap management and weekly workload scheduling.</p>
+  </div>
+  <div class="green-bar"></div>
+</div>
+
+<div class="main">
+  <div class="cards">
+
+    <a href="roadmap.html" class="card card-roadmap">
+      <div class="card-banner"></div>
+      <div class="card-body">
+        <div class="card-icon">📋</div>
+        <h2>CY26 Roadmap Planner</h2>
+        <p>Calendar year roadmap with Gantt chart, board, and list views. Track 31+ initiatives across BAU, continuation, and new projects with milestones, subtasks, and team assignments.</p>
+        <div class="card-features">
+          <span class="card-tag">Gantt Chart</span>
+          <span class="card-tag">Kanban Board</span>
+          <span class="card-tag">Milestones</span>
+          <span class="card-tag">Subtasks</span>
+          <span class="card-tag">Team Mgmt</span>
+          <span class="card-tag">Cloud Sync</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-link">Open Roadmap <span class="arrow">→</span></span>
+      </div>
+    </a>
+
+    <a href="weekly.html" class="card card-weekly">
+      <div class="card-banner"></div>
+      <div class="card-body">
+        <div class="card-icon">📅</div>
+        <h2>Weekly Workload Planner</h2>
+        <p>Rolling 4-week view showing who is doing what each day. Balance workload across team members, track tasks, meetings, and leave with capacity indicators.</p>
+        <div class="card-features">
+          <span class="card-tag">4-Week View</span>
+          <span class="card-tag">Daily Entries</span>
+          <span class="card-tag">Workload Balance</span>
+          <span class="card-tag">Leave Tracking</span>
+          <span class="card-tag">Print View</span>
+          <span class="card-tag">Cloud Sync</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="card-link">Open Weekly Planner <span class="arrow">→</span></span>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<div class="footer">
+  STP Planning Suite · Sub-Transmission Network Planning · AusNet Services · CY2026
+</div>
+
+</body>
+</html>

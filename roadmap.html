@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STP CY26 Roadmap Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f4f5f7;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f0f2f5;
+  --bg-input: #eef0f4;
+  --border: #d4d8e1;
+  --border-focus: #8cc63f;
+  --text: #1a2744;
+  --text-dim: #5a6a85;
+  --text-muted: #8995a9;
+  --accent: #8cc63f;
+  --accent-glow: rgba(140,198,63,0.12);
+  --green: #8cc63f;
+  --green-dim: rgba(140,198,63,0.12);
+  --red: #d94040;
+  --red-dim: rgba(217,64,64,0.1);
+  --amber: #e8a317;
+  --amber-dim: rgba(232,163,23,0.1);
+  --teal: #00a5b5;
+  --teal-dim: rgba(0,165,181,0.1);
+  --purple: #6b5fa0;
+  --purple-dim: rgba(107,95,160,0.1);
+  --cat-bau: #253658;
+  --cat-cont: #e8a317;
+  --cat-new: #8cc63f;
+  --radius: 6px;
+  --radius-lg: 10px;
+  --shadow: 0 2px 12px rgba(26,39,68,0.08);
+  --navy: #1a2744;
+  --navy-light: #253658;
+  --ausnet-green: #8cc63f;
+  --ausnet-teal: #00a5b5;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Source Sans Pro', 'Calibri', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* HEADER */
+.header {
+  background: var(--navy);
+  border-bottom: 3px solid var(--ausnet-green);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.logo {
+  width: 36px; height: 36px;
+  background: var(--ausnet-green);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px; color: var(--navy);
+}
+.header h1 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; color: #ffffff; font-family: 'Montserrat', sans-serif; }
+.header h1 span { color: rgba(255,255,255,0.6); font-weight: 400; font-size: 14px; margin-left: 8px; }
+.header-actions { display: flex; gap: 8px; }
+.header-actions .btn { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.2); color: #ffffff; }
+.header-actions .btn:hover { background: rgba(255,255,255,0.22); border-color: rgba(255,255,255,0.35); }
+.header-actions .btn-primary { background: var(--ausnet-green); border-color: var(--ausnet-green); color: var(--navy); }
+.header-actions .btn-primary:hover { background: #7ab835; }
+
+/* BUTTONS */
+.btn {
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--navy);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--bg-card-hover); border-color: var(--navy-light); }
+.btn-primary {
+  background: var(--ausnet-green);
+  border-color: var(--ausnet-green);
+  color: var(--navy);
+  font-weight: 700;
+}
+.btn-primary:hover { background: #7ab835; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-danger { color: var(--red); }
+.btn-danger:hover { background: var(--red-dim); border-color: var(--red); }
+.btn-icon {
+  padding: 6px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 16px;
+}
+.btn-icon:hover { color: var(--text); background: var(--bg-input); }
+
+/* TABS */
+.tabs-bar {
+  display: flex;
+  gap: 2px;
+  padding: 0 28px;
+  background: var(--navy-light);
+  border-bottom: 1px solid var(--border);
+}
+.tab-btn {
+  padding: 10px 18px;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.6);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+.tab-btn:hover { color: #ffffff; }
+.tab-btn.active { color: var(--ausnet-green); border-bottom-color: var(--ausnet-green); }
+
+/* LAYOUT */
+.main-container {
+  display: flex;
+  height: calc(100vh - 95px);
+}
+.sidebar {
+  width: 300px;
+  min-width: 300px;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.sidebar-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sidebar-header h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--navy); font-family: 'Montserrat', sans-serif; }
+.sidebar-search {
+  margin: 12px 16px 8px;
+  padding: 8px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  width: calc(100% - 32px);
+  outline: none;
+}
+.sidebar-search:focus { border-color: var(--border-focus); }
+.sidebar-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+.sidebar-list::-webkit-scrollbar { width: 4px; }
+.sidebar-list::-webkit-scrollbar-thumb { background: #c4c9d4; border-radius: 4px; }
+.task-item {
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.12s;
+  margin-bottom: 2px;
+}
+.task-item:hover { background: var(--bg-card-hover); }
+.task-item.active { background: var(--accent-glow); border-left: 3px solid var(--ausnet-green); }
+.task-item-name { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+.task-item-meta { display: flex; gap: 8px; align-items: center; }
+.task-item-meta span { font-size: 11px; color: var(--text-dim); }
+.cat-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.cat-bau { background: rgba(37,54,88,0.1); color: #253658; }
+.cat-continuation { background: rgba(232,163,23,0.1); color: #c48a0f; }
+.cat-new { background: rgba(140,198,63,0.12); color: #5e8a1e; }
+
+/* CONTENT AREA */
+.content-area {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* GANTT VIEW */
+.gantt-wrapper {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+.gantt-wrapper::-webkit-scrollbar { width: 8px; height: 8px; }
+.gantt-wrapper::-webkit-scrollbar-thumb { background: #c4c9d4; border-radius: 4px; }
+.gantt-wrapper::-webkit-scrollbar-corner { background: var(--bg); }
+
+.gantt-container {
+  display: grid;
+  min-width: fit-content;
+}
+
+.gantt-header-row {
+  display: contents;
+}
+.gantt-quarter-header {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  color: #ffffff;
+  background: var(--navy);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  font-family: 'Montserrat', sans-serif;
+}
+.gantt-month-header {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  color: var(--navy);
+  background: #eef0f4;
+  position: sticky;
+  top: 32px;
+  z-index: 10;
+  border-right: 1px solid var(--border);
+}
+.gantt-task-label {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 260px;
+  cursor: pointer;
+}
+.gantt-task-label:hover { background: var(--bg-card-hover); }
+.gantt-task-label .expand-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+.gantt-cell {
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid rgba(212,216,225,0.6);
+  position: relative;
+  min-height: 38px;
+}
+.gantt-bar {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  border-radius: 4px;
+  min-width: 8px;
+  cursor: pointer;
+  transition: filter 0.15s;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.gantt-bar:hover { filter: brightness(1.2); }
+.gantt-bar.bau { background: linear-gradient(90deg, #1a2744, #253658); }
+.gantt-bar.continuation { background: linear-gradient(90deg, #c48a0f, #e8a317); }
+.gantt-bar.new { background: linear-gradient(90deg, #6a9e2a, #8cc63f); }
+.gantt-subtask .gantt-task-label { padding-left: 36px; font-weight: 400; color: var(--text-dim); font-size: 12px; }
+.gantt-subtask .gantt-bar { top: 10px; bottom: 10px; opacity: 0.75; }
+
+.milestone-marker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background: var(--red);
+  border: 2px solid #ffffff;
+  z-index: 2;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.milestone-marker:hover {
+  transform: translate(-50%, -50%) rotate(45deg) scale(1.4);
+  box-shadow: 0 0 8px var(--red);
+}
+.today-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--ausnet-teal);
+  z-index: 3;
+  pointer-events: none;
+}
+.today-line::before {
+  content: 'Today';
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--ausnet-teal);
+  white-space: nowrap;
+}
+
+/* DETAIL PANEL */
+.detail-panel {
+  width: 380px;
+  min-width: 380px;
+  background: var(--bg-card);
+  border-left: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 0;
+  display: none;
+}
+.detail-panel.open { display: block; }
+.detail-panel::-webkit-scrollbar { width: 4px; }
+.detail-panel::-webkit-scrollbar-thumb { background: #c4c9d4; border-radius: 4px; }
+.detail-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.detail-header h2 { font-size: 16px; font-weight: 700; line-height: 1.3; flex: 1; font-family: 'Montserrat', sans-serif; color: var(--navy); }
+.detail-section {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.detail-section h4 {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--navy);
+  margin-bottom: 10px;
+  font-family: 'Montserrat', sans-serif;
+}
+.detail-field { margin-bottom: 12px; }
+.detail-field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+.detail-field input, .detail-field select, .detail-field textarea {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+}
+.detail-field input:focus, .detail-field select:focus, .detail-field textarea:focus {
+  border-color: var(--border-focus);
+}
+.detail-field textarea { resize: vertical; min-height: 60px; }
+.detail-field select { cursor: pointer; }
+
+.subtask-list { list-style: none; }
+.subtask-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(212,216,225,0.6);
+}
+.subtask-list li:last-child { border-bottom: none; }
+.subtask-check {
+  width: 16px; height: 16px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  transition: all 0.15s;
+}
+.subtask-check.done { background: var(--ausnet-green); border-color: var(--ausnet-green); color: #fff; }
+.subtask-text { flex: 1; }
+.subtask-text.done { text-decoration: line-through; color: var(--text-dim); }
+
+.milestone-list { list-style: none; }
+.milestone-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+}
+.milestone-diamond {
+  width: 8px; height: 8px;
+  background: var(--red);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+.notes-block {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+
+/* PROGRESS BAR */
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  background: var(--bg-input);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--ausnet-green), var(--ausnet-teal));
+  transition: width 0.3s;
+}
+
+/* STATS BAR */
+.stats-bar {
+  display: flex;
+  gap: 0;
+  padding: 0 28px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.stat-card {
+  padding: 12px 20px;
+  border-right: 1px solid var(--border);
+  flex: 1;
+}
+.stat-card:last-child { border-right: none; }
+.stat-value { font-size: 22px; font-weight: 700; font-family: 'Montserrat', monospace; color: var(--navy); }
+.stat-label { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+/* MODAL */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,39,68,0.45);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  width: 520px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-header h2 { font-size: 16px; font-weight: 700; font-family: 'Montserrat', sans-serif; color: var(--navy); }
+.modal-body { padding: 20px 24px; }
+.modal-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* TOOLTIP */
+.tooltip {
+  position: fixed;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 12px;
+  box-shadow: var(--shadow);
+  z-index: 150;
+  pointer-events: none;
+  max-width: 260px;
+}
+.tooltip-title { font-weight: 600; margin-bottom: 4px; }
+.tooltip-meta { color: var(--text-dim); }
+
+/* FILTER BAR */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  padding: 10px 28px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+  flex-wrap: wrap;
+}
+.filter-chip {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.filter-chip:hover { border-color: var(--text-muted); color: var(--text); }
+.filter-chip.active { background: var(--accent-glow); border-color: var(--ausnet-green); color: #5e8a1e; }
+.filter-divider { width: 1px; height: 20px; background: var(--border); }
+
+/* Hidden */
+.hidden { display: none !important; }
+
+/* Drag Ghost */
+.drag-ghost {
+  background: var(--accent);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  position: fixed;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* Export dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  min-width: 160px;
+  z-index: 50;
+  display: none;
+}
+.dropdown-menu.open { display: block; }
+.dropdown-menu a {
+  display: block;
+  padding: 8px 14px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+.dropdown-menu a:hover { background: var(--bg-card-hover); }
+
+@media (max-width: 1100px) {
+  .sidebar { width: 240px; min-width: 240px; }
+  .detail-panel { width: 320px; min-width: 320px; }
+}
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .detail-panel { position: fixed; right: 0; top: 95px; bottom: 0; z-index: 50; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">STP</div>
+    <h1>CY26 Roadmap Planner <span>Sub-Transmission Planning</span></h1>
+  </div>
+  <div class="header-actions">
+    <button class="btn" onclick="undoAction()" title="Undo">↩ Undo</button>
+    <button class="btn-primary btn" onclick="openAddTask()">＋ Add Task</button>
+    <div class="dropdown">
+      <button class="btn" onclick="toggleDropdown(this)">⤓ Export</button>
+      <div class="dropdown-menu" id="exportMenu">
+        <a onclick="exportJSON()">Export JSON</a>
+        <a onclick="exportCSV()">Export CSV</a>
+      </div>
+    </div>
+    <button class="btn" onclick="importJSON()">⤒ Import</button>
+    <button class="btn" onclick="openTeamModal()">👤 Team</button>
+    <button class="btn" onclick="openSetupModal()" title="Cloud Sync Settings">☁ Sync</button>
+    <span id="syncStatus" style="font-size:11px;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;gap:4px;padding:0 4px;"></span>
+  </div>
+</div>
+
+<div class="tabs-bar">
+  <button class="tab-btn active" data-tab="gantt">Gantt Chart</button>
+  <button class="tab-btn" data-tab="board">Board View</button>
+  <button class="tab-btn" data-tab="list">List View</button>
+</div>
+
+<div class="stats-bar" id="statsBar"></div>
+
+<div class="filter-bar">
+  <span style="font-size:12px;color:var(--text-dim);font-weight:600;">FILTER:</span>
+  <button class="filter-chip active" data-filter="all">All</button>
+  <button class="filter-chip" data-filter="BAU">BAU</button>
+  <button class="filter-chip" data-filter="Continuation">Continuation</button>
+  <button class="filter-chip" data-filter="New Initiative">New Initiative</button>
+  <div class="filter-divider"></div>
+  <span style="font-size:12px;color:var(--text-dim);font-weight:600;">LEAD:</span>
+  <select id="leadFilter" style="padding:4px 8px;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;color:var(--text);font-size:12px;cursor:pointer;">
+    <option value="all">All Engineers</option>
+  </select>
+  <div class="filter-divider"></div>
+  <span style="font-size:12px;color:var(--text-dim);font-weight:600;">STATUS:</span>
+  <select id="statusFilter" style="padding:4px 8px;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;color:var(--text);font-size:12px;cursor:pointer;">
+    <option value="all">All</option>
+    <option value="Not Started">Not Started</option>
+    <option value="In Progress">In Progress</option>
+    <option value="On Hold">On Hold</option>
+    <option value="Completed">Completed</option>
+  </select>
+</div>
+
+<div class="main-container">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h3>Tasks</h3>
+      <span id="taskCount" style="font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;"></span>
+    </div>
+    <input class="sidebar-search" type="text" placeholder="Search tasks..." id="searchInput" oninput="filterSidebar()">
+    <div class="sidebar-list" id="sidebarList"></div>
+  </div>
+
+  <div class="content-area">
+    <div id="ganttView" class="gantt-wrapper"></div>
+    <div id="boardView" class="hidden" style="flex:1;overflow:auto;padding:20px 28px;"></div>
+    <div id="listView" class="hidden" style="flex:1;overflow:auto;padding:20px 28px;"></div>
+  </div>
+
+  <div class="detail-panel" id="detailPanel"></div>
+</div>
+
+<!-- Add/Edit Task Modal -->
+<div class="modal-overlay" id="taskModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Add New Task</h2>
+      <button class="btn-icon" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="modalSave" onclick="saveTask()">Add Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip" style="display:none;"></div>
+
+<!-- Team Management Modal -->
+<div class="modal-overlay" id="teamModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Manage Team</h2>
+      <button class="btn-icon" onclick="closeTeamModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:14px;">Add or remove engineers from the team list. Changes apply to all Lead/Support dropdowns across the tool.</p>
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <input type="text" id="newEngineerName" placeholder="Engineer initials (e.g. JD)" maxlength="20"
+          style="flex:1;padding:8px 12px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;outline:none;"
+          onkeydown="if(event.key==='Enter')addEngineer()">
+        <button class="btn btn-primary" onclick="addEngineer()">＋ Add</button>
+      </div>
+      <div id="teamList"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="closeTeamModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import hidden input -->
+<input type="file" id="importInput" accept=".json" style="display:none" onchange="handleImport(event)">
+
+<!-- Cloud Sync Setup Modal -->
+<div class="modal-overlay" id="setupModal">
+  <div class="modal" style="width:560px;">
+    <div class="modal-header">
+      <h2>Cloud Sync Settings</h2>
+      <button class="btn-icon" onclick="closeSetupModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-dim);margin-bottom:16px;">Connect to a GitHub Gist to share tasks across your team. All team members opening this page will see and edit the same data.</p>
+      
+      <div class="detail-field">
+        <label>GitHub Personal Access Token</label>
+        <input type="password" id="gh_token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="font-size:12px;">
+        <span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:block;">Generate at github.com → Settings → Developer settings → Personal access tokens → Tokens (classic) → with "gist" scope only</span>
+      </div>
+      <div class="detail-field">
+        <label>Gist ID <span style="font-weight:400;color:var(--text-muted);">(leave blank to create new)</span></label>
+        <input type="text" id="gh_gistId" placeholder="e.g. a1b2c3d4e5f6789..." style="font-size:12px;">
+      </div>
+      <div style="margin-bottom:14px;display:flex;gap:8px;">
+        <button class="btn btn-primary" onclick="connectGist()">Connect</button>
+        <button class="btn" id="createGistBtn" onclick="createNewGist()">Create New Gist & Push Tasks</button>
+      </div>
+      <div id="setupStatus" style="font-size:13px;min-height:40px;padding:10px;background:var(--bg-input);border-radius:var(--radius);"></div>
+
+      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);">
+        <h4 style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:8px;font-family:'Montserrat',sans-serif;">FIRST-TIME SETUP (5 MINUTES)</h4>
+        <ol style="font-size:12px;color:var(--text-dim);line-height:1.8;padding-left:18px;">
+          <li>Go to <strong>github.com</strong> → Sign in (or create a free account)</li>
+          <li>Click your avatar → <strong>Settings → Developer settings → Personal access tokens → Tokens (classic)</strong></li>
+          <li>Click <strong>"Generate new token (classic)"</strong>, name it "STP Planner", tick only <strong>"gist"</strong> scope, click Generate</li>
+          <li>Copy the token (starts with <strong>ghp_</strong>) and paste it above</li>
+          <li>Leave Gist ID blank and click <strong>"Create New Gist & Push Tasks"</strong></li>
+          <li>Share the <strong>Gist ID</strong> with your team — they enter it + their own token to connect</li>
+        </ol>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="disconnectCloud();">Disconnect</button>
+      <button class="btn" id="pullBtn" onclick="pullFromCloud()" style="display:none;">↓ Pull Latest</button>
+      <button class="btn" id="pushBtn" onclick="pushToCloud()" style="display:none;">↑ Push Changes</button>
+      <button class="btn btn-primary" onclick="closeSetupModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== GITHUB GIST CLOUD SYNC ==========
+let CLOUD_CONFIG = JSON.parse(localStorage.getItem('stp_cloud_config')) || null;
+let cloudConnected = false;
+let cloudSyncing = false;
+let lastSyncTime = null;
+
+const GIST_FILENAME = 'stp_cy26_roadmap.json';
+
+async function gistFetch(method, gistId, body) {
+  const url = gistId ? `https://api.github.com/gists/${gistId}` : 'https://api.github.com/gists';
+  const headers = {
+    'Accept': 'application/vnd.github+json',
+    'Authorization': `Bearer ${CLOUD_CONFIG.token}`,
+  };
+  if (body) headers['Content-Type'] = 'application/json';
+  const resp = await fetch(url, { method, headers, body: body ? JSON.stringify(body) : undefined });
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    throw new Error(err.message || `GitHub API error: ${resp.status}`);
+  }
+  return resp.json();
+}
+
+async function cloudLoad() {
+  if (!CLOUD_CONFIG || !CLOUD_CONFIG.gistId) return;
+  showSyncStatus('loading');
+  try {
+    const gist = await gistFetch('GET', CLOUD_CONFIG.gistId);
+    const file = gist.files[GIST_FILENAME];
+    if (file && file.content) {
+      const data = JSON.parse(file.content);
+      tasks = data.tasks || [];
+      ENGINEERS = data.engineers || ENGINEERS;
+      nextId = tasks.length ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
+      saveEngineers();
+      saveToLocal();
+      cloudConnected = true;
+      lastSyncTime = new Date();
+      showSyncStatus('connected');
+      render();
+    }
+  } catch(e) {
+    console.error('Cloud load failed:', e);
+    showSyncStatus('error', e.message);
+    loadFromLocal();
+    render();
+  }
+}
+
+async function cloudSave() {
+  if (!cloudConnected || cloudSyncing || !CLOUD_CONFIG) return;
+  cloudSyncing = true;
+  showSyncStatus('syncing');
+  try {
+    const content = JSON.stringify({ tasks, engineers: ENGINEERS, lastModified: new Date().toISOString() }, null, 2);
+    await gistFetch('PATCH', CLOUD_CONFIG.gistId, {
+      files: { [GIST_FILENAME]: { content } }
+    });
+    lastSyncTime = new Date();
+    showSyncStatus('connected');
+  } catch(e) {
+    console.error('Cloud save failed:', e);
+    showSyncStatus('error', 'Save failed – stored locally');
+    saveToLocal();
+  }
+  cloudSyncing = false;
+}
+
+// Debounce cloud saves to avoid hammering the API
+let cloudSaveTimer = null;
+function debouncedCloudSave() {
+  if (!cloudConnected) return;
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer = setTimeout(() => cloudSave(), 1500);
+}
+
+function showSyncStatus(state, msg) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  const icons = {
+    connected: `<span style="color:var(--ausnet-green);">● Synced</span>`,
+    syncing: `<span style="color:var(--ausnet-teal);">↻ Saving...</span>`,
+    loading: `<span style="color:var(--ausnet-teal);">↻ Loading...</span>`,
+    error: `<span style="color:var(--red);">✕ ${msg||'Error'}</span>`,
+    offline: `<span style="color:var(--amber);">○ Local only</span>`
+  };
+  el.innerHTML = icons[state] || icons.offline;
+  if (lastSyncTime && state === 'connected') {
+    el.innerHTML += `<span style="margin-left:6px;font-size:10px;color:var(--text-muted);">${lastSyncTime.toLocaleTimeString()}</span>`;
+  }
+}
+
+// ========== CLOUD SETUP FUNCTIONS ==========
+function openSetupModal() {
+  const cfg = CLOUD_CONFIG || {};
+  document.getElementById('setupModal').classList.add('open');
+  document.getElementById('gh_token').value = cfg.token || '';
+  document.getElementById('gh_gistId').value = cfg.gistId || '';
+  document.getElementById('pullBtn').style.display = cfg.gistId ? 'inline-flex' : 'none';
+  document.getElementById('pushBtn').style.display = cfg.gistId ? 'inline-flex' : 'none';
+}
+function closeSetupModal() {
+  document.getElementById('setupModal').classList.remove('open');
+}
+
+async function connectGist() {
+  const token = document.getElementById('gh_token').value.trim();
+  const gistId = document.getElementById('gh_gistId').value.trim();
+  if (!token) { alert('Please enter your GitHub token'); return; }
+  if (!gistId) { alert('Please enter a Gist ID, or click "Create New Gist"'); return; }
+
+  CLOUD_CONFIG = { token, gistId };
+  const statusEl = document.getElementById('setupStatus');
+  statusEl.innerHTML = '<span style="color:var(--ausnet-teal);">Connecting...</span>';
+
+  try {
+    const gist = await gistFetch('GET', gistId);
+    if (gist.files[GIST_FILENAME]) {
+      const data = JSON.parse(gist.files[GIST_FILENAME].content);
+      const taskCount = data.tasks ? data.tasks.length : 0;
+      localStorage.setItem('stp_cloud_config', JSON.stringify(CLOUD_CONFIG));
+      cloudConnected = true;
+      statusEl.innerHTML = `<span style="color:var(--ausnet-green);">✓ Connected! Gist has ${taskCount} tasks. Last modified: ${data.lastModified || 'unknown'}</span>`;
+      document.getElementById('pullBtn').style.display = 'inline-flex';
+      document.getElementById('pushBtn').style.display = 'inline-flex';
+    } else {
+      statusEl.innerHTML = `<span style="color:var(--amber);">⚠ Gist found but no roadmap data. Click "Push Changes" to upload your tasks.</span>`;
+      localStorage.setItem('stp_cloud_config', JSON.stringify(CLOUD_CONFIG));
+      document.getElementById('pushBtn').style.display = 'inline-flex';
+    }
+  } catch(e) {
+    statusEl.innerHTML = `<span style="color:var(--red);">✕ Failed: ${e.message}</span>`;
+    document.getElementById('pullBtn').style.display = 'none';
+    document.getElementById('pushBtn').style.display = 'none';
+  }
+}
+
+async function createNewGist() {
+  const token = document.getElementById('gh_token').value.trim();
+  if (!token) { alert('Please enter your GitHub token first'); return; }
+
+  CLOUD_CONFIG = { token, gistId: null };
+  const statusEl = document.getElementById('setupStatus');
+  statusEl.innerHTML = '<span style="color:var(--ausnet-teal);">Creating Gist...</span>';
+
+  try {
+    const content = JSON.stringify({ tasks, engineers: ENGINEERS, lastModified: new Date().toISOString() }, null, 2);
+    const gist = await gistFetch('POST', null, {
+      description: 'STP CY26 Roadmap Planner – Shared Task Data',
+      public: false,
+      files: { [GIST_FILENAME]: { content } }
+    });
+    CLOUD_CONFIG.gistId = gist.id;
+    localStorage.setItem('stp_cloud_config', JSON.stringify(CLOUD_CONFIG));
+    cloudConnected = true;
+    lastSyncTime = new Date();
+    document.getElementById('gh_gistId').value = gist.id;
+    statusEl.innerHTML = `<span style="color:var(--ausnet-green);">✓ Gist created! ${tasks.length} tasks uploaded.</span>
+      <br><span style="font-size:12px;color:var(--text-dim);margin-top:6px;display:block;">
+      <strong>Share this Gist ID with your team:</strong><br>
+      <code style="background:var(--bg);padding:4px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace;font-size:13px;user-select:all;display:inline-block;margin-top:4px;">${gist.id}</code>
+      <br>Each team member needs their own GitHub token + this Gist ID to connect.</span>`;
+    document.getElementById('pullBtn').style.display = 'inline-flex';
+    document.getElementById('pushBtn').style.display = 'inline-flex';
+    showSyncStatus('connected');
+  } catch(e) {
+    statusEl.innerHTML = `<span style="color:var(--red);">✕ Failed: ${e.message}</span>`;
+  }
+}
+
+async function pullFromCloud() {
+  await cloudLoad();
+  closeSetupModal();
+}
+
+async function pushToCloud() {
+  if (!CLOUD_CONFIG) return;
+  cloudConnected = true;
+  await cloudSave();
+  closeSetupModal();
+  render();
+}
+
+function disconnectCloud() {
+  CLOUD_CONFIG = null;
+  localStorage.removeItem('stp_cloud_config');
+  cloudConnected = false;
+  showSyncStatus('offline');
+  closeSetupModal();
+}
+
+// ========== DATA MODEL ==========
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const QUARTERS = [{label:'Q1', months:[0,1,2]},{label:'Q2', months:[3,4,5]},{label:'Q3', months:[6,7,8]},{label:'Q4', months:[9,10,11]}];
+let ENGINEERS = JSON.parse(localStorage.getItem('stp_cy26_engineers')) || ['EN','MP','PS','ST','MM','PP','EE','TBC','Grad'];
+function saveEngineers() { localStorage.setItem('stp_cy26_engineers', JSON.stringify(ENGINEERS)); }
+function engineerOptions(current, includeNone) {
+  const opts = includeNone ? [''] : [];
+  const list = [...ENGINEERS];
+  if (current && !list.includes(current)) list.push(current);
+  return opts.concat(list).map(e => 
+    `<option value="${e}" ${e===current?'selected':''}>${e || 'None'}</option>`
+  ).join('');
+}
+const CATEGORIES = ['BAU','Continuation','New Initiative'];
+const STATUSES = ['Not Started','In Progress','On Hold','Completed'];
+const PRIORITIES = ['Low','Medium','High','Critical'];
+
+let undoStack = [];
+let activeTaskId = null;
+let activeFilter = 'all';
+let editingTaskId = null;
+
+// Seed data from PowerPoint
+const SEED_TASKS = [
+  {id:1, name:'DAPR incl methodology review', category:'BAU', startMonth:0, endMonth:8, lead:'TBC', support:'', status:'In Progress', priority:'High', progress:15, subtasks:[{id:1,text:'Methodology review',done:false},{id:2,text:'DAPR 2026 submission',done:false}], milestones:[{month:3,label:'DAPR 2025 due'},{month:8,label:'DAPR 2026 due'}], notes:'Methodology review and DAPR 2026. Continuation from CY25.', dependencies:[]},
+  {id:2, name:'TCPR', category:'Continuation', startMonth:0, endMonth:11, lead:'MP', support:'PS', status:'In Progress', priority:'High', progress:10, subtasks:[{id:1,text:'Data collection',done:false},{id:2,text:'TCPR 2026 report',done:false}], milestones:[{month:6,label:'Mid-year review'}], notes:'TCPR 2026 – full calendar year activity.', dependencies:[]},
+  {id:3, name:'PQ methodology', category:'BAU', startMonth:0, endMonth:5, lead:'EN', support:'', status:'In Progress', priority:'Medium', progress:20, subtasks:[{id:1,text:'Base case methods review',done:false},{id:2,text:'Min-Max all loops',done:false},{id:3,text:'Historical 5yr FL models',done:false}], milestones:[{month:5,label:'Methodology finalised'}], notes:'Power Quality methodology: base case, min-max, historical 5-year FL models.', dependencies:[]},
+  {id:4, name:'PQ report', category:'BAU', startMonth:4, endMonth:9, lead:'EN', support:'', status:'Not Started', priority:'Medium', progress:0, subtasks:[], milestones:[{month:9,label:'Report complete'}], notes:'PQ report following methodology finalisation.', dependencies:[3]},
+  {id:5, name:'PSSE Models', category:'BAU', startMonth:0, endMonth:11, lead:'EN', support:'TBC', status:'In Progress', priority:'High', progress:25, subtasks:[{id:1,text:'Model updates',done:false},{id:2,text:'Validation',done:false}], milestones:[], notes:'Ongoing PSSE model maintenance and updates.', dependencies:[]},
+  {id:6, name:'PSSE forward looking', category:'BAU', startMonth:3, endMonth:8, lead:'EN', support:'', status:'Not Started', priority:'Medium', progress:0, subtasks:[], milestones:[], notes:'Forward looking scenario models in PSS/E.', dependencies:[5]},
+  {id:7, name:'Hosting capacity method', category:'New Initiative', startMonth:0, endMonth:7, lead:'MM', support:'EN', status:'In Progress', priority:'High', progress:10, subtasks:[{id:1,text:'Review HC methodology',done:false},{id:2,text:'Update HC calcs',done:false}], milestones:[{month:4,label:'Review complete'},{month:7,label:'Update HC'}], notes:'Review hosting capacity methodology, then update.', dependencies:[]},
+  {id:8, name:'Gen connection DB (Power BI)', category:'New Initiative', startMonth:2, endMonth:7, lead:'MM', support:'EN', status:'Not Started', priority:'Medium', progress:0, subtasks:[], milestones:[], notes:'Generation connection database in Power BI.', dependencies:[]},
+  {id:9, name:'Update guideline/SOP', category:'BAU', startMonth:6, endMonth:11, lead:'TBC', support:'', status:'Not Started', priority:'Low', progress:0, subtasks:[], milestones:[], notes:'Update guidelines and SOPs.', dependencies:[]},
+  {id:10, name:'LNDPP 2026', category:'BAU', startMonth:0, endMonth:11, lead:'TBC', support:'', status:'In Progress', priority:'Medium', progress:5, subtasks:[], milestones:[], notes:'Local Network Development Planning Process 2026.', dependencies:[]},
+  {id:11, name:'DLR pilot project', category:'New Initiative', startMonth:0, endMonth:11, lead:'ST', support:'Grad', status:'In Progress', priority:'High', progress:15, subtasks:[{id:1,text:'Pilot scoping',done:false},{id:2,text:'Installation',done:false},{id:3,text:'Data collection & analysis',done:false}], milestones:[{month:3,label:'Pilot scope finalised'}], notes:'Dynamic Line Rating pilot project.', dependencies:[]},
+  {id:12, name:'Generation monitoring plan', category:'BAU', startMonth:2, endMonth:7, lead:'EN', support:'', status:'Not Started', priority:'Medium', progress:0, subtasks:[], milestones:[], notes:'Generation monitoring plan development.', dependencies:[]},
+  {id:13, name:'Donny Brooke TS', category:'New Initiative', startMonth:0, endMonth:9, lead:'MP', support:'TBC', status:'In Progress', priority:'High', progress:10, subtasks:[{id:1,text:'Option analysis',done:false},{id:2,text:'Joint planning',done:false},{id:3,text:'Go/no-go decision',done:false}], milestones:[{month:6,label:'Go/No-go decision'}], notes:'Option analysis, joint planning, go or no-go decision.', dependencies:[]},
+  {id:14, name:'Nar Nar Goon TS', category:'New Initiative', startMonth:0, endMonth:9, lead:'PS', support:'TBC', status:'In Progress', priority:'High', progress:10, subtasks:[{id:1,text:'Option analysis',done:false},{id:2,text:'Joint planning',done:false},{id:3,text:'Go/no-go decision',done:false}], milestones:[{month:6,label:'Go/No-go decision'}], notes:'Option analysis, joint planning, go or no-go decision.', dependencies:[]},
+  {id:15, name:'RWTS long-term plan', category:'New Initiative', startMonth:0, endMonth:8, lead:'ST', support:'', status:'In Progress', priority:'Medium', progress:5, subtasks:[{id:1,text:'Option analysis',done:false},{id:2,text:'Short-term plan',done:false},{id:3,text:'Long-term plan',done:false}], milestones:[], notes:'Option analysis, short-term and long-term plan.', dependencies:[]},
+  {id:16, name:'System strength review', category:'New Initiative', startMonth:3, endMonth:8, lead:'EN', support:'', status:'Not Started', priority:'Medium', progress:0, subtasks:[{id:1,text:'SS consult with GC',done:false}], milestones:[], notes:'System strength review – consult with GC.', dependencies:[]},
+  {id:17, name:'Forecasting Gap Analysis', category:'New Initiative', startMonth:2, endMonth:7, lead:'EN', support:'ST', status:'Not Started', priority:'Medium', progress:0, subtasks:[], milestones:[], notes:'Forecasting gap analysis.', dependencies:[]},
+  {id:18, name:'Gippsland long-term plan', category:'New Initiative', startMonth:3, endMonth:11, lead:'ST', support:'', status:'Not Started', priority:'Medium', progress:0, subtasks:[], milestones:[], notes:'Gippsland region long-term plan.', dependencies:[]},
+  {id:19, name:'Feeder Rearrangement CBTS', category:'New Initiative', startMonth:0, endMonth:6, lead:'PP', support:'', status:'In Progress', priority:'Medium', progress:20, subtasks:[], milestones:[], notes:'CBTS feeder rearrangement.', dependencies:[]},
+  {id:20, name:'East Cranbourne Augmentation', category:'New Initiative', startMonth:3, endMonth:11, lead:'TBC', support:'', status:'Not Started', priority:'Medium', progress:0, subtasks:[], milestones:[], notes:'East Cranbourne augmentation – BC and RIT.', dependencies:[]},
+  {id:21, name:'East Gippsland augmentation', category:'New Initiative', startMonth:0, endMonth:9, lead:'TBC', support:'', status:'Not Started', priority:'Medium', progress:0, subtasks:[{id:1,text:'RIT BC',done:false}], milestones:[], notes:'East Gippsland augmentation – RIT BC.', dependencies:[]},
+  {id:22, name:'SMTS / KMS', category:'Continuation', startMonth:0, endMonth:5, lead:'MP', support:'', status:'In Progress', priority:'Medium', progress:30, subtasks:[], milestones:[], notes:'SMTS / KMS continuation.', dependencies:[]},
+  {id:23, name:'Winter Readiness', category:'BAU', startMonth:2, endMonth:4, lead:'TBC', support:'TBC', status:'Not Started', priority:'High', progress:0, subtasks:[{id:1,text:'Outage requests',done:false},{id:2,text:'Readiness review',done:false}], milestones:[{month:4,label:'Winter ready'}], notes:'Winter readiness preparation.', dependencies:[]},
+  {id:24, name:'Summer Readiness', category:'BAU', startMonth:8, endMonth:10, lead:'TBC', support:'TBC', status:'Not Started', priority:'High', progress:0, subtasks:[], milestones:[{month:10,label:'Summer ready'}], notes:'Summer readiness preparation.', dependencies:[]},
+  {id:25, name:'Operational Planning', category:'BAU', startMonth:0, endMonth:11, lead:'TBC', support:'', status:'In Progress', priority:'Medium', progress:10, subtasks:[], milestones:[], notes:'Ongoing operational planning.', dependencies:[]},
+  {id:26, name:'AFLR 2026', category:'BAU', startMonth:0, endMonth:5, lead:'TBC', support:'', status:'In Progress', priority:'Medium', progress:10, subtasks:[{id:1,text:'Final revision',done:false}], milestones:[{month:4,label:'Final rev'}], notes:'Annual Fault Level Report 2026.', dependencies:[]},
+  {id:27, name:'FL Min Max Report', category:'BAU', startMonth:0, endMonth:5, lead:'TBC', support:'', status:'Not Started', priority:'Medium', progress:0, subtasks:[{id:1,text:'Review benchmark',done:false},{id:2,text:'Internal fault level report',done:false}], milestones:[], notes:'Fault Level Min/Max report.', dependencies:[]},
+  {id:28, name:'DLF Generators', category:'BAU', startMonth:0, endMonth:7, lead:'TBC', support:'', status:'In Progress', priority:'Medium', progress:15, subtasks:[{id:1,text:'Data request',done:false}], milestones:[], notes:'Distribution Loss Factors for generators.', dependencies:[]},
+  {id:29, name:'Distribution losses NGER AASB', category:'BAU', startMonth:3, endMonth:11, lead:'EE', support:'TBC', status:'Not Started', priority:'Medium', progress:0, subtasks:[{id:1,text:'AASB reporting',done:false},{id:2,text:'NGER reporting',done:false}], milestones:[{month:6,label:'AASB due'},{month:9,label:'NGER due'}], notes:'Distribution losses reporting for NGER and AASB.', dependencies:[]},
+  {id:30, name:'GPSRR', category:'BAU', startMonth:0, endMonth:5, lead:'TBC', support:'', status:'Not Started', priority:'Low', progress:0, subtasks:[], milestones:[], notes:'Generator Performance Standards compliance review.', dependencies:[]},
+  {id:31, name:'SMTS B2 TX', category:'Continuation', startMonth:0, endMonth:11, lead:'ST', support:'Grad', status:'In Progress', priority:'High', progress:10, subtasks:[{id:1,text:'RIT',done:false},{id:2,text:'EWA',done:false},{id:3,text:'Handover to project delivery',done:false}], milestones:[{month:5,label:'RIT complete'},{month:8,label:'EWA complete'}], notes:'SMTS B2 transformer – RIT, EWA, handover to project delivery.', dependencies:[]},
+];
+
+let tasks = JSON.parse(JSON.stringify(SEED_TASKS));
+let nextId = 32;
+
+function saveToLocal() {
+  localStorage.setItem('stp_cy26_tasks', JSON.stringify(tasks));
+}
+function loadFromLocal() {
+  const saved = localStorage.getItem('stp_cy26_tasks');
+  if (saved) {
+    try {
+      tasks = JSON.parse(saved);
+      nextId = Math.max(...tasks.map(t => t.id)) + 1;
+    } catch(e) { tasks = JSON.parse(JSON.stringify(SEED_TASKS)); }
+  }
+}
+
+function saveState() {
+  undoStack.push(JSON.stringify(tasks));
+  if (undoStack.length > 30) undoStack.shift();
+  saveToLocal();
+}
+
+function undoAction() {
+  if (undoStack.length === 0) return;
+  tasks = JSON.parse(undoStack.pop());
+  saveToLocal();
+  render();
+}
+
+function loadSaved() {
+  if (CLOUD_CONFIG && CLOUD_CONFIG.gistId) {
+    cloudLoad();
+  } else {
+    loadFromLocal();
+    showSyncStatus('offline');
+  }
+}
+
+// ========== FILTERING ==========
+function getFilteredTasks() {
+  let filtered = [...tasks];
+  if (activeFilter !== 'all') filtered = filtered.filter(t => t.category === activeFilter);
+  const leadVal = document.getElementById('leadFilter').value;
+  if (leadVal !== 'all') filtered = filtered.filter(t => t.lead === leadVal);
+  const statusVal = document.getElementById('statusFilter').value;
+  if (statusVal !== 'all') filtered = filtered.filter(t => t.status === statusVal);
+  return filtered;
+}
+
+// ========== RENDER ==========
+function render() {
+  renderStats();
+  renderSidebar();
+  renderGantt();
+  renderBoard();
+  renderList();
+  renderLeadFilter();
+  if (activeTaskId) renderDetail(activeTaskId);
+}
+
+function renderStats() {
+  const total = tasks.length;
+  const inProgress = tasks.filter(t => t.status === 'In Progress').length;
+  const completed = tasks.filter(t => t.status === 'Completed').length;
+  const avgProgress = total ? Math.round(tasks.reduce((s,t) => s+t.progress, 0)/total) : 0;
+  const high = tasks.filter(t => t.priority === 'High' || t.priority === 'Critical').length;
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat-card"><div class="stat-value">${total}</div><div class="stat-label">Total Tasks</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:var(--ausnet-teal)">${inProgress}</div><div class="stat-label">In Progress</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:var(--ausnet-green)">${completed}</div><div class="stat-label">Completed</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:var(--amber)">${high}</div><div class="stat-label">High Priority</div></div>
+    <div class="stat-card">
+      <div class="stat-value">${avgProgress}%</div>
+      <div class="stat-label">Avg Progress</div>
+      <div class="progress-bar-container"><div class="progress-bar-fill" style="width:${avgProgress}%"></div></div>
+    </div>
+  `;
+}
+
+function renderLeadFilter() {
+  const sel = document.getElementById('leadFilter');
+  const current = sel.value;
+  const leads = [...new Set(tasks.map(t => t.lead).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="all">All Engineers</option>' + leads.map(l => `<option value="${l}" ${l===current?'selected':''}>${l}</option>`).join('');
+}
+
+function renderSidebar() {
+  const filtered = getFilteredTasks();
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const list = filtered.filter(t => !search || t.name.toLowerCase().includes(search));
+  document.getElementById('taskCount').textContent = list.length;
+  document.getElementById('sidebarList').innerHTML = list.map(t => `
+    <div class="task-item ${activeTaskId===t.id?'active':''}" onclick="selectTask(${t.id})">
+      <div class="task-item-name">${t.name}</div>
+      <div class="task-item-meta">
+        <span class="cat-badge cat-${t.category.toLowerCase().replace(/\s+/g,'')}">${t.category}</span>
+        <span>${t.lead || '—'}</span>
+        <span>${t.progress}%</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ========== GANTT CHART ==========
+function renderGantt() {
+  const filtered = getFilteredTasks();
+  const wrapper = document.getElementById('ganttView');
+  const cellW = 90;
+  const labelW = 260;
+
+  // Calculate today marker position
+  const now = new Date();
+  const yearStart = new Date(2026, 0, 1);
+  const currentMonth = now.getFullYear() === 2026 ? now.getMonth() : -1;
+  const dayInMonth = now.getDate();
+  const daysInMonth = currentMonth >= 0 ? new Date(2026, currentMonth+1, 0).getDate() : 30;
+
+  let html = `<div style="display:grid;grid-template-columns:${labelW}px repeat(12,${cellW}px);position:relative;">`;
+
+  // Quarter headers
+  html += `<div style="position:sticky;left:0;z-index:11;background:var(--navy);border-bottom:1px solid var(--border);"></div>`;
+  QUARTERS.forEach(q => {
+    html += `<div class="gantt-quarter-header" style="grid-column:span 3;">${q.label} 2026</div>`;
+  });
+
+  // Month headers
+  html += `<div style="position:sticky;left:0;z-index:11;background:#eef0f4;border-bottom:1px solid var(--border);border-right:1px solid var(--border);padding:6px 14px;font-size:11px;color:var(--navy);font-weight:700;font-family:'Montserrat',sans-serif;">TASK</div>`;
+  MONTHS.forEach(m => {
+    html += `<div class="gantt-month-header">${m}'26</div>`;
+  });
+
+  // Task rows
+  filtered.forEach(t => {
+    const catClass = t.category === 'BAU' ? 'bau' : t.category === 'Continuation' ? 'continuation' : 'new';
+    // Label
+    html += `<div class="gantt-task-label" onclick="selectTask(${t.id})" title="${t.name}">
+      <span class="expand-icon">${t.subtasks.length ? '▸' : '·'}</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.name}</span>
+    </div>`;
+    // Cells with bar
+    for (let m = 0; m < 12; m++) {
+      let cellContent = '';
+      if (m === t.startMonth) {
+        const span = t.endMonth - t.startMonth + 1;
+        const barWidth = span * cellW - 12;
+        cellContent = `<div class="gantt-bar ${catClass}" style="left:6px;width:${barWidth}px;" onclick="selectTask(${t.id})" 
+          onmouseenter="showTooltip(event,${t.id})" onmouseleave="hideTooltip()">
+          ${span >= 2 ? t.name : ''}
+        </div>`;
+      }
+      // Milestones
+      t.milestones.forEach(ms => {
+        if (ms.month === m) {
+          cellContent += `<div class="milestone-marker" style="left:${cellW/2}px;" 
+            onmouseenter="showMsTooltip(event,'${ms.label.replace(/'/g,"\\'")}','${t.name.replace(/'/g,"\\'")}','${MONTHS[ms.month]}\\'26')" 
+            onmouseleave="hideTooltip()"></div>`;
+        }
+      });
+      html += `<div class="gantt-cell">${cellContent}</div>`;
+    }
+  });
+
+  // Today line
+  if (currentMonth >= 0) {
+    const todayX = labelW + currentMonth * cellW + (dayInMonth / daysInMonth) * cellW;
+    html += `<div class="today-line" style="left:${todayX}px;top:0;height:${(filtered.length+2)*38}px;"></div>`;
+  }
+
+  html += '</div>';
+  wrapper.innerHTML = html;
+}
+
+// ========== BOARD VIEW ==========
+function renderBoard() {
+  const filtered = getFilteredTasks();
+  const board = document.getElementById('boardView');
+  const cols = STATUSES.map(s => ({status:s, tasks: filtered.filter(t => t.status === s)}));
+  const statusColors = {'Not Started':'var(--text-dim)','In Progress':'var(--ausnet-teal)','On Hold':'var(--amber)','Completed':'var(--ausnet-green)'};
+
+  board.innerHTML = `<div style="display:grid;grid-template-columns:repeat(${STATUSES.length},1fr);gap:16px;min-height:400px;">
+    ${cols.map(c => `
+      <div style="background:var(--bg-card);border-radius:var(--radius-lg);border:1px solid var(--border);overflow:hidden;"
+        ondragover="event.preventDefault()" ondrop="dropTask(event,'${c.status}')">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:13px;font-weight:600;color:${statusColors[c.status]}">${c.status}</span>
+          <span style="font-size:12px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;">${c.tasks.length}</span>
+        </div>
+        <div style="padding:8px;min-height:300px;">
+          ${c.tasks.map(t => `
+            <div draggable="true" ondragstart="dragTask(event,${t.id})" 
+              style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:8px;cursor:grab;"
+              onclick="selectTask(${t.id})">
+              <div style="font-size:13px;font-weight:500;margin-bottom:6px;">${t.name}</div>
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                <span class="cat-badge cat-${t.category.toLowerCase().replace(/\s+/g,'')}">${t.category}</span>
+                <span style="font-size:11px;color:var(--text-dim);">${t.lead||'—'}</span>
+                <span style="font-size:11px;color:var(--text-dim);margin-left:auto;">${t.progress}%</span>
+              </div>
+              <div class="progress-bar-container" style="margin-top:8px;"><div class="progress-bar-fill" style="width:${t.progress}%"></div></div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+let draggedTaskId = null;
+function dragTask(e, id) { draggedTaskId = id; e.dataTransfer.effectAllowed = 'move'; }
+function dropTask(e, status) {
+  e.preventDefault();
+  if (draggedTaskId === null) return;
+  saveState();
+  const t = tasks.find(t => t.id === draggedTaskId);
+  if (t) { t.status = status; if (status==='Completed') t.progress=100; }
+  draggedTaskId = null;
+  render();
+}
+
+// ========== LIST VIEW ==========
+function renderList() {
+  const filtered = getFilteredTasks();
+  const lv = document.getElementById('listView');
+  const statusColors = {'Not Started':'var(--text-dim)','In Progress':'var(--ausnet-teal)','On Hold':'var(--amber)','Completed':'var(--ausnet-green)'};
+  const prioColors = {'Low':'var(--text-dim)','Medium':'var(--ausnet-teal)','High':'var(--amber)','Critical':'var(--red)'};
+
+  lv.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+    <thead>
+      <tr style="border-bottom:2px solid var(--border);">
+        <th style="text-align:left;padding:10px 12px;color:var(--text-dim);font-size:11px;font-weight:600;text-transform:uppercase;">Task</th>
+        <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Category</th>
+        <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Status</th>
+        <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Priority</th>
+        <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Lead</th>
+        <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Support</th>
+        <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Timeline</th>
+        <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Progress</th>
+        <th style="padding:10px 8px;"></th>
+      </tr>
+    </thead>
+    <tbody>
+      ${filtered.map(t => `
+        <tr style="border-bottom:1px solid var(--border);cursor:pointer;" onclick="selectTask(${t.id})" onmouseenter="this.style.background='var(--bg-card-hover)'" onmouseleave="this.style.background=''">
+          <td style="padding:10px 12px;font-weight:500;">${t.name}</td>
+          <td style="padding:10px 8px;"><span class="cat-badge cat-${t.category.toLowerCase().replace(/\s+/g,'')}">${t.category}</span></td>
+          <td style="padding:10px 8px;color:${statusColors[t.status]};font-weight:500;">${t.status}</td>
+          <td style="padding:10px 8px;color:${prioColors[t.priority]};font-weight:500;">${t.priority}</td>
+          <td style="padding:10px 8px;">${t.lead||'—'}</td>
+          <td style="padding:10px 8px;color:var(--text-dim);">${t.support||'—'}</td>
+          <td style="padding:10px 8px;font-family:'JetBrains Mono',monospace;font-size:11px;">${MONTHS[t.startMonth]} – ${MONTHS[t.endMonth]}</td>
+          <td style="padding:10px 8px;width:120px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;width:32px;">${t.progress}%</span>
+              <div class="progress-bar-container" style="flex:1;"><div class="progress-bar-fill" style="width:${t.progress}%"></div></div>
+            </div>
+          </td>
+          <td style="padding:10px 8px;">
+            <button class="btn-icon btn-danger" onclick="event.stopPropagation();deleteTask(${t.id})" title="Delete">✕</button>
+          </td>
+        </tr>
+      `).join('')}
+    </tbody>
+  </table>`;
+}
+
+// ========== DETAIL PANEL ==========
+function selectTask(id) {
+  activeTaskId = id;
+  renderDetail(id);
+  renderSidebar();
+  document.getElementById('detailPanel').classList.add('open');
+}
+
+function renderDetail(id) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  const panel = document.getElementById('detailPanel');
+  const statusColors = {'Not Started':'var(--text-dim)','In Progress':'var(--ausnet-teal)','On Hold':'var(--amber)','Completed':'var(--ausnet-green)'};
+  const prioColors = {'Low':'var(--text-dim)','Medium':'var(--ausnet-teal)','High':'var(--amber)','Critical':'var(--red)'};
+
+  panel.innerHTML = `
+    <div class="detail-header">
+      <h2>${t.name}</h2>
+      <div style="display:flex;gap:4px;">
+        <button class="btn-icon" onclick="openEditTask(${t.id})" title="Edit">✎</button>
+        <button class="btn-icon" onclick="closeDetail()" title="Close">✕</button>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div class="detail-field">
+            <label>Category</label>
+            <span class="cat-badge cat-${t.category.toLowerCase().replace(/\s+/g,'')}">${t.category}</span>
+          </div>
+          <div class="detail-field">
+            <label>Status</label>
+            <select onchange="updateField(${t.id},'status',this.value)" style="padding:6px 8px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:${statusColors[t.status]};font-family:inherit;font-size:13px;font-weight:600;width:100%;">
+              ${STATUSES.map(s => `<option value="${s}" ${s===t.status?'selected':''}>${s}</option>`).join('')}
+            </select>
+          </div>
+          <div class="detail-field">
+            <label>Priority</label>
+            <select onchange="updateField(${t.id},'priority',this.value)" style="padding:6px 8px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:${prioColors[t.priority]};font-family:inherit;font-size:13px;font-weight:600;width:100%;">
+              ${PRIORITIES.map(p => `<option value="${p}" ${p===t.priority?'selected':''}>${p}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="detail-field">
+            <label>Lead</label>
+            <select onchange="updateField(${t.id},'lead',this.value)" style="padding:6px 8px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;width:100%;">
+              ${engineerOptions(t.lead, false)}
+            </select>
+          </div>
+          <div class="detail-field">
+            <label>Support</label>
+            <select onchange="updateField(${t.id},'support',this.value)" style="padding:6px 8px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;width:100%;">
+              ${engineerOptions(t.support, true)}
+            </select>
+          </div>
+          <div class="detail-field">
+            <label>Timeline</label>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;padding:6px 0;">${MONTHS[t.startMonth]}'26 → ${MONTHS[t.endMonth]}'26</div>
+          </div>
+        </div>
+      </div>
+      <div class="detail-field">
+        <label>Progress (${t.progress}%)</label>
+        <input type="range" min="0" max="100" step="5" value="${t.progress}" 
+          style="width:100%;accent-color:var(--accent);cursor:pointer;"
+          oninput="updateField(${t.id},'progress',parseInt(this.value))">
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>Subtasks (${t.subtasks.filter(s=>s.done).length}/${t.subtasks.length})</h4>
+      <ul class="subtask-list">
+        ${t.subtasks.map((s,i) => `
+          <li>
+            <div class="subtask-check ${s.done?'done':''}" onclick="toggleSubtask(${t.id},${i})">${s.done?'✓':''}</div>
+            <span class="subtask-text ${s.done?'done':''}">${s.text}</span>
+            <button class="btn-icon" style="font-size:12px;color:var(--text-muted);" onclick="removeSubtask(${t.id},${i})">✕</button>
+          </li>
+        `).join('')}
+      </ul>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <input type="text" id="newSubtask" placeholder="Add subtask..." 
+          style="flex:1;padding:6px 10px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:12px;"
+          onkeydown="if(event.key==='Enter')addSubtask(${t.id})">
+        <button class="btn btn-sm" onclick="addSubtask(${t.id})">Add</button>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>Milestones</h4>
+      <ul class="milestone-list">
+        ${t.milestones.map((ms,i) => `
+          <li>
+            <div class="milestone-diamond"></div>
+            <span style="flex:1;">${ms.label}</span>
+            <span style="font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;">${MONTHS[ms.month]}'26</span>
+            <button class="btn-icon" style="font-size:12px;color:var(--text-muted);" onclick="removeMilestone(${t.id},${i})">✕</button>
+          </li>
+        `).join('')}
+      </ul>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <input type="text" id="newMsLabel" placeholder="Milestone label..." 
+          style="flex:1;padding:6px 10px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:12px;">
+        <select id="newMsMonth" style="padding:6px 8px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:12px;">
+          ${MONTHS.map((m,i) => `<option value="${i}">${m}</option>`).join('')}
+        </select>
+        <button class="btn btn-sm" onclick="addMilestone(${t.id})">Add</button>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>Dependencies</h4>
+      <div style="font-size:13px;color:var(--text-dim);">
+        ${t.dependencies.length ? t.dependencies.map(dId => {
+          const dep = tasks.find(x => x.id === dId);
+          return dep ? `<span style="display:inline-block;padding:3px 8px;background:var(--bg-input);border-radius:4px;margin:2px;font-size:11px;">${dep.name}</span>` : '';
+        }).join('') : '<span style="font-size:12px;">No dependencies</span>'}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <h4>Notes</h4>
+      <textarea style="width:100%;min-height:80px;padding:10px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;resize:vertical;"
+        onchange="updateField(${t.id},'notes',this.value)">${t.notes||''}</textarea>
+    </div>
+
+    <div style="padding:16px 20px;">
+      <button class="btn btn-danger btn-sm" onclick="deleteTask(${t.id})">Delete Task</button>
+    </div>
+  `;
+}
+
+function closeDetail() {
+  activeTaskId = null;
+  document.getElementById('detailPanel').classList.remove('open');
+  renderSidebar();
+}
+
+function updateField(id, field, value) {
+  saveState();
+  const t = tasks.find(t => t.id === id);
+  if (t) { t[field] = value; debouncedCloudSave(); render(); }
+}
+
+function toggleSubtask(taskId, idx) {
+  saveState();
+  const t = tasks.find(t => t.id === taskId);
+  if (t && t.subtasks[idx] !== undefined) {
+    t.subtasks[idx].done = !t.subtasks[idx].done;
+    const done = t.subtasks.filter(s => s.done).length;
+    t.progress = t.subtasks.length ? Math.round((done / t.subtasks.length) * 100) : t.progress;
+    debouncedCloudSave();
+    render();
+  }
+}
+
+function addSubtask(taskId) {
+  const input = document.getElementById('newSubtask');
+  const text = input.value.trim();
+  if (!text) return;
+  saveState();
+  const t = tasks.find(t => t.id === taskId);
+  if (t) {
+    const maxId = t.subtasks.length ? Math.max(...t.subtasks.map(s => s.id)) + 1 : 1;
+    t.subtasks.push({id: maxId, text, done: false});
+    input.value = '';
+    debouncedCloudSave();
+    render();
+  }
+}
+
+function removeSubtask(taskId, idx) {
+  saveState();
+  const t = tasks.find(t => t.id === taskId);
+  if (t) { t.subtasks.splice(idx, 1); debouncedCloudSave(); render(); }
+}
+
+function addMilestone(taskId) {
+  const label = document.getElementById('newMsLabel').value.trim();
+  const month = parseInt(document.getElementById('newMsMonth').value);
+  if (!label) return;
+  saveState();
+  const t = tasks.find(t => t.id === taskId);
+  if (t) { t.milestones.push({month, label}); debouncedCloudSave(); render(); }
+}
+
+function removeMilestone(taskId, idx) {
+  saveState();
+  const t = tasks.find(t => t.id === taskId);
+  if (t) { t.milestones.splice(idx, 1); debouncedCloudSave(); render(); }
+}
+
+function deleteTask(id) {
+  if (!confirm('Delete this task?')) return;
+  saveState();
+  const t = tasks.find(t => t.id === id);
+  debouncedCloudSave();
+  tasks = tasks.filter(t => t.id !== id);
+  if (activeTaskId === id) closeDetail();
+  render();
+}
+
+// ========== ADD/EDIT TASK MODAL ==========
+function openAddTask() {
+  editingTaskId = null;
+  document.getElementById('modalTitle').textContent = 'Add New Task';
+  document.getElementById('modalSave').textContent = 'Add Task';
+  renderModalForm({});
+  document.getElementById('taskModal').classList.add('open');
+}
+
+function openEditTask(id) {
+  editingTaskId = id;
+  const t = tasks.find(t => t.id === id);
+  document.getElementById('modalTitle').textContent = 'Edit Task';
+  document.getElementById('modalSave').textContent = 'Save Changes';
+  renderModalForm(t);
+  document.getElementById('taskModal').classList.add('open');
+}
+
+function renderModalForm(t) {
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-field">
+      <label>Task Name *</label>
+      <input type="text" id="f_name" value="${t.name||''}" placeholder="e.g. DAPR methodology review">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="detail-field">
+        <label>Category</label>
+        <select id="f_category">
+          ${CATEGORIES.map(c => `<option value="${c}" ${c===t.category?'selected':''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="detail-field">
+        <label>Status</label>
+        <select id="f_status">
+          ${STATUSES.map(s => `<option value="${s}" ${s===t.status?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="detail-field">
+        <label>Priority</label>
+        <select id="f_priority">
+          ${PRIORITIES.map(p => `<option value="${p}" ${p===(t.priority||'Medium')?'selected':''}>${p}</option>`).join('')}
+        </select>
+      </div>
+      <div class="detail-field">
+        <label>Lead Engineer</label>
+        <select id="f_lead">
+          ${engineerOptions(t.lead, false)}
+        </select>
+      </div>
+      <div class="detail-field">
+        <label>Support</label>
+        <select id="f_support">
+          ${engineerOptions(t.support, true)}
+        </select>
+      </div>
+      <div class="detail-field">
+        <label>Progress (%)</label>
+        <input type="number" id="f_progress" min="0" max="100" value="${t.progress||0}">
+      </div>
+      <div class="detail-field">
+        <label>Start Month</label>
+        <select id="f_start">
+          ${MONTHS.map((m,i) => `<option value="${i}" ${i===t.startMonth?'selected':''}>${m}</option>`).join('')}
+        </select>
+      </div>
+      <div class="detail-field">
+        <label>End Month</label>
+        <select id="f_end">
+          ${MONTHS.map((m,i) => `<option value="${i}" ${i===(t.endMonth??11)?'selected':''}>${m}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="detail-field">
+      <label>Notes</label>
+      <textarea id="f_notes" rows="3">${t.notes||''}</textarea>
+    </div>
+  `;
+}
+
+function saveTask() {
+  const name = document.getElementById('f_name').value.trim();
+  if (!name) { alert('Task name is required'); return; }
+  saveState();
+  const data = {
+    name,
+    category: document.getElementById('f_category').value,
+    status: document.getElementById('f_status').value,
+    priority: document.getElementById('f_priority').value,
+    lead: document.getElementById('f_lead').value,
+    support: document.getElementById('f_support').value,
+    progress: parseInt(document.getElementById('f_progress').value)||0,
+    startMonth: parseInt(document.getElementById('f_start').value),
+    endMonth: parseInt(document.getElementById('f_end').value),
+    notes: document.getElementById('f_notes').value,
+  };
+
+  let taskRef;
+  if (editingTaskId) {
+    taskRef = tasks.find(t => t.id === editingTaskId);
+    if (taskRef) Object.assign(taskRef, data);
+  } else {
+    taskRef = {id: nextId++, ...data, subtasks:[], milestones:[], dependencies:[]};
+    tasks.push(taskRef);
+  }
+  debouncedCloudSave();
+  closeModal();
+  render();
+}
+
+function closeModal() {
+  document.getElementById('taskModal').classList.remove('open');
+  editingTaskId = null;
+}
+
+// ========== TOOLTIP ==========
+function showTooltip(e, id) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  const tip = document.getElementById('tooltip');
+  tip.innerHTML = `<div class="tooltip-title">${t.name}</div>
+    <div class="tooltip-meta">${t.lead||'TBC'} · ${MONTHS[t.startMonth]}–${MONTHS[t.endMonth]} · ${t.progress}% · ${t.status}</div>`;
+  tip.style.display = 'block';
+  tip.style.left = e.clientX + 12 + 'px';
+  tip.style.top = e.clientY + 12 + 'px';
+}
+function hideTooltip() { document.getElementById('tooltip').style.display = 'none'; }
+function showMsTooltip(e, label, taskName, month) {
+  const tip = document.getElementById('tooltip');
+  tip.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+    <div style="width:10px;height:10px;background:var(--red);transform:rotate(45deg);flex-shrink:0;"></div>
+    <span style="font-weight:700;font-size:13px;">Milestone</span>
+  </div>
+  <div class="tooltip-title" style="margin-bottom:4px;">${label}</div>
+  <div class="tooltip-meta">${taskName} · ${month}</div>`;
+  tip.style.display = 'block';
+  tip.style.left = e.clientX + 14 + 'px';
+  tip.style.top = e.clientY + 14 + 'px';
+}
+
+// ========== TEAM MANAGEMENT ==========
+function openTeamModal() {
+  renderTeamList();
+  document.getElementById('teamModal').classList.add('open');
+  setTimeout(() => document.getElementById('newEngineerName').focus(), 100);
+}
+function closeTeamModal() {
+  document.getElementById('teamModal').classList.remove('open');
+  render();
+}
+function renderTeamList() {
+  const container = document.getElementById('teamList');
+  // Count how many tasks each engineer is assigned to
+  const usageCount = {};
+  ENGINEERS.forEach(e => { usageCount[e] = 0; });
+  tasks.forEach(t => {
+    if (t.lead && usageCount[t.lead] !== undefined) usageCount[t.lead]++;
+    if (t.support && usageCount[t.support] !== undefined) usageCount[t.support]++;
+  });
+
+  container.innerHTML = ENGINEERS.map((eng, i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius);border:1px solid var(--border);margin-bottom:6px;background:var(--bg-input);">
+      <span style="width:28px;height:28px;border-radius:50%;background:rgba(26,39,68,0.1);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--navy);flex-shrink:0;">${eng.substring(0,2)}</span>
+      <span style="flex:1;font-size:13px;font-weight:500;">${eng}</span>
+      <span style="font-size:11px;color:var(--text-dim);font-family:'JetBrains Mono',monospace;">${usageCount[eng]||0} task${(usageCount[eng]||0)!==1?'s':''}</span>
+      <button class="btn-icon btn-danger" style="font-size:13px;" onclick="removeEngineer(${i})" title="Remove ${eng}">✕</button>
+    </div>
+  `).join('');
+}
+function addEngineer() {
+  const input = document.getElementById('newEngineerName');
+  const name = input.value.trim().toUpperCase();
+  if (!name) return;
+  if (ENGINEERS.includes(name)) {
+    input.style.borderColor = 'var(--red)';
+    setTimeout(() => input.style.borderColor = 'var(--border)', 1500);
+    return;
+  }
+  ENGINEERS.push(name);
+  saveEngineers();
+  input.value = '';
+  renderTeamList();
+}
+function removeEngineer(idx) {
+  const eng = ENGINEERS[idx];
+  // Check if engineer is assigned to any tasks
+  const assigned = tasks.filter(t => t.lead === eng || t.support === eng);
+  if (assigned.length > 0) {
+    if (!confirm(`"${eng}" is assigned to ${assigned.length} task(s). Remove anyway?\n\nTheir assignments will remain on existing tasks but they won't appear in dropdowns for new assignments.`)) return;
+  }
+  ENGINEERS.splice(idx, 1);
+  saveEngineers();
+  renderTeamList();
+}
+
+// ========== EXPORT / IMPORT ==========
+function exportJSON() {
+  const blob = new Blob([JSON.stringify(tasks, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'STP_CY26_Roadmap.json';
+  a.click();
+  closeDropdowns();
+}
+
+function exportCSV() {
+  let csv = 'Task,Category,Status,Priority,Lead,Support,Start,End,Progress,Notes\n';
+  tasks.forEach(t => {
+    csv += `"${t.name}","${t.category}","${t.status}","${t.priority}","${t.lead}","${t.support}","${MONTHS[t.startMonth]}'26","${MONTHS[t.endMonth]}'26",${t.progress},"${(t.notes||'').replace(/"/g,'""')}"\n`;
+  });
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'STP_CY26_Roadmap.csv';
+  a.click();
+  closeDropdowns();
+}
+
+function importJSON() { document.getElementById('importInput').click(); }
+function handleImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      saveState();
+      tasks = JSON.parse(ev.target.result);
+      nextId = Math.max(...tasks.map(t => t.id)) + 1;
+      saveToLocal();
+      if (cloudConnected && confirm('Push imported tasks to cloud?')) pushToCloud();
+      render();
+    } catch(err) { alert('Invalid JSON file'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function toggleDropdown(btn) {
+  const menu = btn.nextElementSibling;
+  menu.classList.toggle('open');
+}
+function closeDropdowns() {
+  document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.dropdown')) closeDropdowns();
+});
+
+// ========== TABS ==========
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.getElementById('ganttView').classList.toggle('hidden', tab !== 'gantt');
+    document.getElementById('boardView').classList.toggle('hidden', tab !== 'board');
+    document.getElementById('listView').classList.toggle('hidden', tab !== 'list');
+  });
+});
+
+// ========== FILTERS ==========
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeFilter = chip.dataset.filter;
+    render();
+  });
+});
+document.getElementById('leadFilter').addEventListener('change', render);
+document.getElementById('statusFilter').addEventListener('change', render);
+
+function filterSidebar() { renderSidebar(); }
+
+// ========== AUTO-REFRESH ==========
+let refreshInterval = null;
+function startAutoRefresh() {
+  if (refreshInterval) clearInterval(refreshInterval);
+  refreshInterval = setInterval(() => {
+    if (cloudConnected && !cloudSyncing) cloudLoad();
+  }, 60000); // refresh every 60 seconds
+}
+
+// ========== INIT ==========
+loadSaved();
+render();
+if (CLOUD_CONFIG && CLOUD_CONFIG.gistId) startAutoRefresh();
+</script>
+</body>
+</html>

@@ -38,7 +38,7 @@
 </style>
 </head>
 <body>
-<div class="hdr"><div class="hdr-l"><div class="logo">STP</div><h1>Workload Planner <span>Sub-Transmission Planning</span></h1></div><div class="hdr-r"><button class="btn" onclick="document.getElementById('plannerFile').click()">📥 Import Planner</button><input type="file" id="plannerFile" accept=".xlsx" style="display:none" onchange="importPlanner(event)"><button class="btn" onclick="openTeam()">👤 Team</button><button class="btn" onclick="openCap()">⚙ Capacity</button><button class="btn" onclick="exportCSV()">⤓ Export</button><button class="btn" onclick="openCloud()">☁ Sync</button><button class="btn" onclick="window.print()">🖨</button><span id="syncSt"></span></div></div>
+<div class="hdr"><div class="hdr-l"><div class="logo">STP</div><h1>Workload Planner <span>Sub-Transmission Planning</span></h1></div><div class="hdr-r"><button class="btn" onclick="document.getElementById('plannerFile').click()">📥 Import Planner</button><input type="file" id="plannerFile" accept=".xlsx" style="display:none" onchange="importPlanner(event)"><button class="btn" onclick="openTeam()">👤 Team</button><button class="btn" onclick="openCap()">⚙ Capacity</button><button class="btn" onclick="exportCSV()">⤓ CSV</button><button class="btn" onclick="exportJSON()">⤓ JSON</button><button class="btn" onclick="document.getElementById('jsonFile').click()">⤒ JSON</button><input type="file" id="jsonFile" accept=".json" style="display:none" onchange="importJSON(event)"><button class="btn" onclick="openCloud()">☁ Sync</button><button class="btn" onclick="window.print()">🖨</button><span id="syncSt"></span></div></div>
 <div class="tabs"><button class="tab on" data-v="schedule">Weekly Schedule</button><button class="tab" data-v="dashboard">Dashboard</button><button class="tab" data-v="person">Person View</button><button class="tab" data-v="category">Category View</button></div>
 <div class="nav"><button class="nav-b" onclick="shift(-4)">⟪</button><button class="nav-b" onclick="shift(-1)">◂</button><button class="today-b" onclick="goNow()">Today</button><button class="nav-b" onclick="shift(1)">▸</button><button class="nav-b" onclick="shift(4)">⟫</button><span class="wk-lbl" id="rlbl"></span></div>
 <div class="view on" id="v-schedule"><div style="overflow-x:auto;padding:16px 24px" id="schedGrid"></div></div>
@@ -304,6 +304,33 @@ function saveCap(){capS={std:parseInt(document.getElementById('capStd').value)||
 function applyCapAll(){if(!confirm('Apply these default values to ALL existing team members? Individual overrides will be replaced.'))return;const s=parseInt(document.getElementById('capStd').value)||38,mt=parseInt(document.getElementById('capMeet').value)||0,ad=parseInt(document.getElementById('capAdmin').value)||0,ct=parseInt(document.getElementById('capCont').value)||0;team.forEach(m=>{m.cap=s;m.meet=mt;m.admin=ad;m.cont=ct;});save();dcs();alert('Applied to '+team.length+' members');}
 
 function exportCSV(){let csv='Week,Date,Day,Member,Task,Category,Project,Hours\n';for(let w=0;w<4;w++)for(let d=0;d<5;d++){const dt=addD(startD,w*7+d);team.forEach(m=>{getE(dt,m.name).forEach(e=>{csv+='"Wk '+wkN(addD(startD,w*7))+'","'+fmt(dt)+'","'+DN[d]+'","'+m.name+'","'+(e.text||'').replace(/"/g,'""')+'","'+catL(e.cat)+'","'+(e.proj||'')+'",'+( e.hours||0)+'\n';});});}const b=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='STP_Workload_'+fmt(startD)+'.csv';a.click();}
+
+function exportJSON(){
+  const data=JSON.stringify({team,entries,cap:capS,exportedOn:new Date().toISOString()},null,2);
+  const b=new Blob([data],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);
+  a.download='STP_Workload_'+fmt(new Date())+'.json';
+  a.click();
+}
+
+function importJSON(ev){
+  const file=ev.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const data=JSON.parse(e.target.result);
+      if(data.team)team=data.team;
+      if(data.entries)entries=data.entries;
+      if(data.cap)capS=data.cap;
+      save();
+      render();
+      alert('Imported successfully: '+team.length+' members, '+Object.keys(entries).length+' day entries loaded.');
+    }catch(err){alert('Invalid JSON file: '+err.message);}
+  };
+  reader.readAsText(file);
+  ev.target.value='';
+}
 
 // ===== PLANNER IMPORT =====
 let plTasks=[];

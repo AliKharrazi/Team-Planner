@@ -611,6 +611,19 @@ body {
 }
 .dropdown-menu a:hover { background: var(--bg-card-hover); }
 
+.task-item[draggable="true"] { cursor: grab; }
+.task-item[draggable="true"]:active { cursor: grabbing; }
+.task-item.drag-over-top { border-top: 2px solid var(--ausnet-green); }
+.task-item.drag-over-bottom { border-bottom: 2px solid var(--ausnet-green); }
+.task-item.dragging { opacity: 0.4; }
+.gantt-task-label[draggable="true"] { cursor: grab; }
+.gantt-task-label[draggable="true"]:active { cursor: grabbing; }
+.gantt-task-label.drag-over-top { border-top: 2px solid var(--ausnet-green); }
+.gantt-task-label.drag-over-bottom { border-bottom: 2px solid var(--ausnet-green); }
+.gantt-task-label.dragging { opacity: 0.4; }
+.drag-handle { cursor: grab; color: var(--text-muted); font-size: 12px; padding: 0 4px; user-select: none; letter-spacing: 1px; }
+.drag-handle:hover { color: var(--navy); }
+
 @media (max-width: 1100px) {
   .sidebar { width: 240px; min-width: 240px; }
   .detail-panel { width: 320px; min-width: 320px; }
@@ -1124,16 +1137,25 @@ function renderSidebar() {
   const search = document.getElementById('searchInput').value.toLowerCase();
   const list = filtered.filter(t => !search || t.name.toLowerCase().includes(search));
   document.getElementById('taskCount').textContent = list.length;
-  document.getElementById('sidebarList').innerHTML = list.map(t => `
-    <div class="task-item ${activeTaskId===t.id?'active':''}" onclick="selectTask(${t.id})">
-      <div class="task-item-name">${t.name}</div>
-      <div class="task-item-meta">
-        <span class="cat-badge cat-${t.category.toLowerCase().replace(/\s+/g,'')}">${t.category}</span>
-        <span>${t.lead || '—'}</span>
-        <span>${t.progress}%</span>
+  document.getElementById('sidebarList').innerHTML = list.map(t => {
+    const idx = tasks.indexOf(t);
+    return `
+    <div class="task-item ${activeTaskId===t.id?'active':''}" draggable="true" 
+      onclick="selectTask(${t.id})"
+      ondragstart="taskDragStart(event,${t.id})" ondragend="taskDragEnd(event)"
+      ondragover="taskDragOver(event,${t.id})" ondragleave="taskDragLeave(event)"
+      ondrop="taskDrop(event,${t.id})" data-taskid="${t.id}">
+      <span class="drag-handle">⠿</span>
+      <div style="flex:1;min-width:0;">
+        <div class="task-item-name">${t.name}</div>
+        <div class="task-item-meta">
+          <span class="cat-badge cat-${t.category.toLowerCase().replace(/\s+/g,'')}">${t.category}</span>
+          <span>${t.lead || '—'}</span>
+          <span>${t.progress}%</span>
+        </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 // ========== GANTT CHART ==========
@@ -1168,8 +1190,11 @@ function renderGantt() {
   filtered.forEach(t => {
     const catClass = t.category === 'BAU' ? 'bau' : t.category === 'Continuation' ? 'continuation' : 'new';
     // Label
-    html += `<div class="gantt-task-label" onclick="selectTask(${t.id})" title="${t.name}">
-      <span class="expand-icon">${t.subtasks.length ? '▸' : '·'}</span>
+    html += `<div class="gantt-task-label" draggable="true" onclick="selectTask(${t.id})" title="${t.name}"
+      ondragstart="taskDragStart(event,${t.id})" ondragend="taskDragEnd(event)"
+      ondragover="taskDragOver(event,${t.id})" ondragleave="taskDragLeave(event)"
+      ondrop="taskDrop(event,${t.id})" data-taskid="${t.id}">
+      <span class="drag-handle">⠿</span>
       <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.name}</span>
     </div>`;
     // Cells with bar
@@ -1426,7 +1451,10 @@ function renderDetail(id) {
         onchange="updateField(${t.id},'notes',this.value)">${t.notes||''}</textarea>
     </div>
 
-    <div style="padding:16px 20px;">
+    <div style="padding:16px 20px;display:flex;align-items:center;gap:8px;">
+      <button class="btn btn-sm" onclick="moveTask(${t.id},-1)" title="Move up">▲ Move Up</button>
+      <button class="btn btn-sm" onclick="moveTask(${t.id},1)" title="Move down">▼ Move Down</button>
+      <span style="flex:1"></span>
       <button class="btn btn-danger btn-sm" onclick="deleteTask(${t.id})">Delete Task</button>
     </div>
   `;
@@ -1490,6 +1518,83 @@ function removeMilestone(taskId, idx) {
   saveState();
   const t = tasks.find(t => t.id === taskId);
   if (t) { t.milestones.splice(idx, 1); debouncedCloudSave(); render(); }
+}
+
+// ========== DRAG & DROP REORDER ==========
+let dragTaskId = null;
+
+function taskDragStart(e, id) {
+  dragTaskId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', id);
+  requestAnimationFrame(() => { e.target.classList.add('dragging'); });
+}
+
+function taskDragEnd(e) {
+  e.target.classList.remove('dragging');
+  // Clean up all drag-over indicators
+  document.querySelectorAll('.drag-over-top,.drag-over-bottom').forEach(el => {
+    el.classList.remove('drag-over-top', 'drag-over-bottom');
+  });
+  dragTaskId = null;
+}
+
+function taskDragOver(e, targetId) {
+  if (dragTaskId === null || dragTaskId === targetId) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const el = e.currentTarget;
+  const rect = el.getBoundingClientRect();
+  const midY = rect.top + rect.height / 2;
+  el.classList.remove('drag-over-top', 'drag-over-bottom');
+  if (e.clientY < midY) {
+    el.classList.add('drag-over-top');
+  } else {
+    el.classList.add('drag-over-bottom');
+  }
+}
+
+function taskDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over-top', 'drag-over-bottom');
+}
+
+function taskDrop(e, targetId) {
+  e.preventDefault();
+  if (dragTaskId === null || dragTaskId === targetId) return;
+
+  const el = e.currentTarget;
+  const rect = el.getBoundingClientRect();
+  const dropAbove = e.clientY < rect.top + rect.height / 2;
+
+  el.classList.remove('drag-over-top', 'drag-over-bottom');
+
+  saveState();
+
+  const srcIdx = tasks.findIndex(t => t.id === dragTaskId);
+  const [movedTask] = tasks.splice(srcIdx, 1);
+
+  let destIdx = tasks.findIndex(t => t.id === targetId);
+  if (!dropAbove) destIdx++;
+
+  tasks.splice(destIdx, 0, movedTask);
+
+  saveToLocal();
+  debouncedCloudSave();
+  dragTaskId = null;
+  render();
+}
+
+// Keep moveTask for detail panel buttons
+function moveTask(id, dir) {
+  const idx = tasks.findIndex(t => t.id === id);
+  if (idx < 0) return;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= tasks.length) return;
+  saveState();
+  [tasks[idx], tasks[newIdx]] = [tasks[newIdx], tasks[idx]];
+  saveToLocal();
+  debouncedCloudSave();
+  render();
 }
 
 function deleteTask(id) {

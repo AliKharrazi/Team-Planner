@@ -68,7 +68,8 @@ function catC(id){return(CATS.find(c=>c.id===id)||CATS[0]).color;}
 function catL(id){return(CATS.find(c=>c.id===id)||CATS[0]).label;}
 function mon(d){const t=new Date(d);const dy=t.getDay();t.setDate(t.getDate()-dy+(dy===0?-6:1));t.setHours(0,0,0,0);return t;}
 function addD(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
-function fmt(d){return d.toISOString().slice(0,10);}
+function fmt(d){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),dy=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+dy;}
+function parseD(s){const p=s.split('-');return new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));}
 function fS(d){return d.toLocaleDateString('en-AU',{day:'numeric',month:'short'});}
 function fWR(m){return fS(m)+' – '+fS(addD(m,4));}
 function isCur(m){const t=new Date();t.setHours(0,0,0,0);return t>=m&&t<=addD(m,4);}
@@ -173,7 +174,7 @@ function openE(ds,mem,idx){
   memSel.innerHTML=team.map(t=>'<option value="'+t.name+'"'+(t.name===mem?' selected':'')+'>'+t.name+'</option>').join('');
   document.getElementById('eDate2').value=ds;
   if(idx>=0){
-    const it=(entries[ek(new Date(ds),mem)]||[])[idx];if(!it)return;
+    const it=(entries[ek(parseD(ds),mem)]||[])[idx];if(!it)return;
     document.getElementById('eTxt').value=it.text;document.getElementById('eCat').value=it.cat||'project';
     document.getElementById('eHrs').value=it.hours||4;document.getElementById('eProj').value=it.proj||'';
     document.getElementById('eTit').textContent='Edit Entry';
@@ -183,7 +184,7 @@ function openE(ds,mem,idx){
   }else{
     document.getElementById('eTxt').value='';document.getElementById('eCat').value='project';
     document.getElementById('eHrs').value=4;document.getElementById('eProj').value='';
-    const d=new Date(ds);document.getElementById('eTit').textContent='Add – '+mem+' – '+d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
+    const d=parseD(ds);document.getElementById('eTit').textContent='Add – '+mem+' – '+d.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'});
     document.getElementById('eCopySection').style.display='none';
   }
   document.getElementById('eMo').classList.add('on');
@@ -191,7 +192,7 @@ function openE(ds,mem,idx){
 }
 function buildCopyDays(currentDs){
   // Find the week this date belongs to, offer other days of same week
-  const dt=new Date(currentDs);const wm=mon(dt);
+  const dt=parseD(currentDs);const wm=mon(dt);
   const container=document.getElementById('eCopyDays');
   let h='';
   for(let d=0;d<5;d++){
@@ -214,14 +215,14 @@ function saveE(){
 
   if(eIdx>=0){
     // Remove from original position
-    const origItems=getE(new Date(eDate),eMem);
+    const origItems=getE(parseD(eDate),eMem);
     origItems.splice(eIdx,1);
-    setE(new Date(eDate),eMem,origItems);
+    setE(parseD(eDate),eMem,origItems);
   }
   // Add to target position (may be different date/member)
-  const targetItems=getE(new Date(newDate),newMem);
+  const targetItems=getE(parseD(newDate),newMem);
   targetItems.push(entry);
-  setE(new Date(newDate),newMem,targetItems);
+  setE(parseD(newDate),newMem,targetItems);
 
   // Handle copy-to-days
   if(eIdx>=0){
@@ -229,16 +230,16 @@ function saveE(){
     copyBoxes.forEach(cb=>{
       const copyDate=cb.value;
       if(copyDate===newDate)return; // already added above
-      const dayItems=getE(new Date(copyDate),newMem);
+      const dayItems=getE(parseD(copyDate),newMem);
       if(!dayItems.find(e=>e.text===text)){// avoid duplicates
         dayItems.push({...entry});
-        setE(new Date(copyDate),newMem,dayItems);
+        setE(parseD(copyDate),newMem,dayItems);
       }
     });
   }
   closeE();render();
 }
-function delE(ds,mem,idx){const d=new Date(ds);const items=getE(d,mem);items.splice(idx,1);setE(d,mem,items);render();}
+function delE(ds,mem,idx){const d=parseD(ds);const items=getE(d,mem);items.splice(idx,1);setE(d,mem,items);render();}
 
 // ===== DRAG & DROP =====
 let dragData=null;
@@ -254,16 +255,16 @@ function dropE(ev,targetDs,targetMem){
   if(!dragData)return;
   const{ds:srcDs,mem:srcMem,idx:srcIdx}=dragData;
   // Get the entry from source
-  const srcItems=getE(new Date(srcDs),srcMem);
+  const srcItems=getE(parseD(srcDs),srcMem);
   if(!srcItems[srcIdx])return;
   const entry={...srcItems[srcIdx]};
   // Remove from source
   srcItems.splice(srcIdx,1);
-  setE(new Date(srcDs),srcMem,srcItems);
+  setE(parseD(srcDs),srcMem,srcItems);
   // Add to target
-  const targetItems=getE(new Date(targetDs),targetMem);
+  const targetItems=getE(parseD(targetDs),targetMem);
   targetItems.push(entry);
-  setE(new Date(targetDs),targetMem,targetItems);
+  setE(parseD(targetDs),targetMem,targetItems);
   dragData=null;
   render();
 }

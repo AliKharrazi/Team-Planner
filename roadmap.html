@@ -1172,19 +1172,22 @@ function renderGantt() {
   const dayInMonth = now.getDate();
   const daysInMonth = currentMonth >= 0 ? new Date(2026, currentMonth+1, 0).getDate() : 30;
 
-  let html = `<div style="display:grid;grid-template-columns:${labelW}px repeat(12,${cellW}px);position:relative;">`;
+  let html = `<div style="display:grid;grid-template-columns:${labelW}px repeat(12,${cellW}px) 70px 70px;position:relative;">`;
 
   // Quarter headers
   html += `<div style="position:sticky;left:0;z-index:11;background:var(--navy);border-bottom:1px solid var(--border);"></div>`;
   QUARTERS.forEach(q => {
     html += `<div class="gantt-quarter-header" style="grid-column:span 3;">${q.label} 2026</div>`;
   });
+  html += `<div class="gantt-quarter-header" style="grid-column:span 2;">TEAM</div>`;
 
   // Month headers
   html += `<div style="position:sticky;left:0;z-index:11;background:#eef0f4;border-bottom:1px solid var(--border);border-right:1px solid var(--border);padding:6px 14px;font-size:11px;color:var(--navy);font-weight:700;font-family:'Montserrat',sans-serif;">TASK</div>`;
   MONTHS.forEach(m => {
     html += `<div class="gantt-month-header">${m}'26</div>`;
   });
+  html += `<div class="gantt-month-header" style="font-weight:700;">LEAD</div>`;
+  html += `<div class="gantt-month-header" style="font-weight:700;">SUPPORT</div>`;
 
   // Task rows
   filtered.forEach(t => {
@@ -1218,6 +1221,9 @@ function renderGantt() {
       });
       html += `<div class="gantt-cell">${cellContent}</div>`;
     }
+    // Lead & Support columns
+    html += `<div style="border-bottom:1px solid var(--border);border-right:1px solid var(--border);padding:8px 6px;font-size:11px;font-weight:600;color:var(--navy);text-align:center;display:flex;align-items:center;justify-content:center;">${t.lead || '—'}</div>`;
+    html += `<div style="border-bottom:1px solid var(--border);padding:8px 6px;font-size:11px;color:var(--text-dim);text-align:center;display:flex;align-items:center;justify-content:center;">${t.support || '—'}</div>`;
   });
 
   // Today line

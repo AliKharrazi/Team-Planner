@@ -686,6 +686,14 @@ body {
     <option value="On Hold">On Hold</option>
     <option value="Completed">Completed</option>
   </select>
+  <span style="font-size:12px;color:var(--text-dim);font-weight:600;">HEALTH:</span>
+  <select id="healthFilter" style="padding:4px 8px;background:var(--bg-card);border:1px solid var(--border);border-radius:20px;color:var(--text);font-size:12px;cursor:pointer;">
+    <option value="all">All</option>
+    <option value="On Track">On Track</option>
+    <option value="At Risk">At Risk</option>
+    <option value="Off Track">Off Track</option>
+    <option value="Blocked">Blocked</option>
+  </select>
 </div>
 
 <div class="main-container">
@@ -1004,6 +1012,12 @@ function engineerOptions(current, includeNone) {
 }
 const CATEGORIES = ['BAU','Continuation','New Initiative'];
 const STATUSES = ['Not Started','In Progress','On Hold','Completed'];
+const HEALTHS = ['On Track','At Risk','Off Track','Blocked'];
+const HEALTH_COLORS = {'On Track':'var(--ausnet-green)','At Risk':'var(--amber)','Off Track':'var(--red)','Blocked':'var(--purple)'};
+// Backward-compat defaults for tasks created before health/effort fields existed
+function tHealth(t){ return t.health || 'On Track'; }
+function tEstH(t){ return (t.estHours!=null) ? t.estHours : 0; }
+function tSpentH(t){ return (t.spentHours!=null) ? t.spentHours : 0; }
 const PRIORITIES = ['Low','Medium','High','Critical'];
 
 let undoStack = [];
@@ -1092,6 +1106,9 @@ function getFilteredTasks() {
   if (leadVal !== 'all') filtered = filtered.filter(t => t.lead === leadVal);
   const statusVal = document.getElementById('statusFilter').value;
   if (statusVal !== 'all') filtered = filtered.filter(t => t.status === statusVal);
+  const healthEl = document.getElementById('healthFilter');
+  const healthVal = healthEl ? healthEl.value : 'all';
+  if (healthVal !== 'all') filtered = filtered.filter(t => tHealth(t) === healthVal);
   return filtered;
 }
 
@@ -1296,11 +1313,13 @@ function renderList() {
         <th style="text-align:left;padding:10px 12px;color:var(--text-dim);font-size:11px;font-weight:600;text-transform:uppercase;">Task</th>
         <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Category</th>
         <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Status</th>
+        <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Health</th>
         <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Priority</th>
         <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Lead</th>
         <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Support</th>
         <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Timeline</th>
         <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Progress</th>
+        <th style="text-align:left;padding:10px 8px;color:var(--text-dim);font-size:11px;font-weight:600;">Effort</th>
         <th style="padding:10px 8px;"></th>
       </tr>
     </thead>
@@ -1310,6 +1329,7 @@ function renderList() {
           <td style="padding:10px 12px;font-weight:500;">${t.name}</td>
           <td style="padding:10px 8px;"><span class="cat-badge cat-${t.category.toLowerCase().replace(/\s+/g,'')}">${t.category}</span></td>
           <td style="padding:10px 8px;color:${statusColors[t.status]};font-weight:500;">${t.status}</td>
+          <td style="padding:10px 8px;"><span style="display:inline-flex;align-items:center;gap:5px;font-weight:500;color:${HEALTH_COLORS[tHealth(t)]};"><span style="width:8px;height:8px;border-radius:50%;background:${HEALTH_COLORS[tHealth(t)]};display:inline-block;"></span>${tHealth(t)}</span></td>
           <td style="padding:10px 8px;color:${prioColors[t.priority]};font-weight:500;">${t.priority}</td>
           <td style="padding:10px 8px;">${t.lead||'—'}</td>
           <td style="padding:10px 8px;color:var(--text-dim);">${t.support||'—'}</td>
@@ -1320,6 +1340,7 @@ function renderList() {
               <div class="progress-bar-container" style="flex:1;"><div class="progress-bar-fill" style="width:${t.progress}%"></div></div>
             </div>
           </td>
+          <td style="padding:10px 8px;width:130px;font-family:'JetBrains Mono',monospace;font-size:11px;color:${(tEstH(t)>0&&tSpentH(t)>tEstH(t))?'var(--red)':'var(--text-dim)'};">${(tEstH(t)||tSpentH(t)) ? (tSpentH(t)+' / '+(tEstH(t)||'—')+'h') : '—'}</td>
           <td style="padding:10px 8px;">
             <button class="btn-icon btn-danger" onclick="event.stopPropagation();deleteTask(${t.id})" title="Delete">✕</button>
           </td>
@@ -1335,6 +1356,23 @@ function selectTask(id) {
   renderDetail(id);
   renderSidebar();
   document.getElementById('detailPanel').classList.add('open');
+}
+
+function effortBlock(t){
+  const est=tEstH(t), spent=tSpentH(t);
+  if(!est && !spent){
+    return `<label>Effort (man-hours)</label><div style="font-size:12px;color:var(--text-muted);padding:2px 0;">Not estimated</div>`;
+  }
+  const pct = est>0 ? Math.round(spent/est*100) : 0;
+  const over = est>0 && spent>est;
+  const barPct = Math.min(pct,100);
+  const barColor = over ? 'var(--red)' : (pct>=90 ? 'var(--amber)' : 'var(--ausnet-green)');
+  const label = `${spent} / ${est||'—'}h` + (est>0 ? ` (${pct}%)` : '') + (over ? ' ⚠ over' : '');
+  return `<label>Effort (man-hours)</label>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="progress-bar-container" style="flex:1;"><div class="progress-bar-fill" style="width:${barPct}%;background:${barColor};"></div></div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${over?'var(--red)':'var(--text-dim)'};white-space:nowrap;">${label}</span>
+    </div>`;
 }
 
 function renderDetail(id) {
@@ -1397,6 +1435,25 @@ function renderDetail(id) {
         <input type="range" min="0" max="100" step="5" value="${t.progress}" 
           style="width:100%;accent-color:var(--accent);cursor:pointer;"
           oninput="updateField(${t.id},'progress',parseInt(this.value))">
+      </div>
+      <div class="detail-field">
+        <label>Health</label>
+        <select onchange="updateField(${t.id},'health',this.value)" style="padding:6px 8px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:${HEALTH_COLORS[tHealth(t)]};font-family:inherit;font-size:13px;font-weight:600;width:100%;">
+          ${HEALTHS.map(h => `<option value="${h}" ${h===tHealth(t)?'selected':''}>${h}</option>`).join('')}
+        </select>
+      </div>
+      <div class="detail-field">
+        ${effortBlock(t)}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px;">
+          <div>
+            <label style="font-size:11px;color:var(--text-dim);">Spent (hrs)</label>
+            <input type="number" min="0" step="1" value="${tSpentH(t)}" onchange="updateField(${t.id},'spentHours',parseFloat(this.value)||0)" style="width:100%;padding:6px 8px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;">
+          </div>
+          <div>
+            <label style="font-size:11px;color:var(--text-dim);">Estimated (hrs)</label>
+            <input type="number" min="0" step="1" value="${tEstH(t)}" onchange="updateField(${t.id},'estHours',parseFloat(this.value)||0)" style="width:100%;padding:6px 8px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:inherit;font-size:13px;">
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1673,6 +1730,20 @@ function renderModalForm(t) {
         <input type="number" id="f_progress" min="0" max="100" value="${t.progress||0}">
       </div>
       <div class="detail-field">
+        <label>Health</label>
+        <select id="f_health">
+          ${HEALTHS.map(h => `<option value="${h}" ${h===tHealth(t)?'selected':''}>${h}</option>`).join('')}
+        </select>
+      </div>
+      <div class="detail-field">
+        <label>Spent (man-hours)</label>
+        <input type="number" id="f_spentHours" min="0" step="1" value="${tSpentH(t)}">
+      </div>
+      <div class="detail-field">
+        <label>Estimated (man-hours)</label>
+        <input type="number" id="f_estHours" min="0" step="1" value="${tEstH(t)}">
+      </div>
+      <div class="detail-field">
         <label>Start Month</label>
         <select id="f_start">
           ${MONTHS.map((m,i) => `<option value="${i}" ${i===t.startMonth?'selected':''}>${m}</option>`).join('')}
@@ -1704,6 +1775,9 @@ function saveTask() {
     lead: document.getElementById('f_lead').value,
     support: document.getElementById('f_support').value,
     progress: parseInt(document.getElementById('f_progress').value)||0,
+    health: document.getElementById('f_health').value,
+    estHours: parseFloat(document.getElementById('f_estHours').value)||0,
+    spentHours: parseFloat(document.getElementById('f_spentHours').value)||0,
     startMonth: parseInt(document.getElementById('f_start').value),
     endMonth: parseInt(document.getElementById('f_end').value),
     notes: document.getElementById('f_notes').value,
@@ -1733,7 +1807,7 @@ function showTooltip(e, id) {
   if (!t) return;
   const tip = document.getElementById('tooltip');
   tip.innerHTML = `<div class="tooltip-title">${t.name}</div>
-    <div class="tooltip-meta">${t.lead||'TBC'} · ${MONTHS[t.startMonth]}–${MONTHS[t.endMonth]} · ${t.progress}% · ${t.status}</div>`;
+    <div class="tooltip-meta">${t.lead||'TBC'} · ${MONTHS[t.startMonth]}–${MONTHS[t.endMonth]} · ${t.progress}% · ${t.status} · ${tHealth(t)}</div>`;
   tip.style.display = 'block';
   tip.style.left = e.clientX + 12 + 'px';
   tip.style.top = e.clientY + 12 + 'px';
@@ -1818,9 +1892,9 @@ function exportJSON() {
 }
 
 function exportCSV() {
-  let csv = 'Task,Category,Status,Priority,Lead,Support,Start,End,Progress,Notes\n';
+  let csv = 'Task,Category,Status,Health,Priority,Lead,Support,Start,End,Progress,EstHours,SpentHours,Notes\n';
   tasks.forEach(t => {
-    csv += `"${t.name}","${t.category}","${t.status}","${t.priority}","${t.lead}","${t.support}","${MONTHS[t.startMonth]}'26","${MONTHS[t.endMonth]}'26",${t.progress},"${(t.notes||'').replace(/"/g,'""')}"\n`;
+    csv += `"${t.name}","${t.category}","${t.status}","${tHealth(t)}","${t.priority}","${t.lead}","${t.support}","${MONTHS[t.startMonth]}'26","${MONTHS[t.endMonth]}'26",${t.progress},${tEstH(t)},${tSpentH(t)},"${(t.notes||'').replace(/"/g,'""')}"\n`;
   });
   const blob = new Blob([csv], {type:'text/csv'});
   const a = document.createElement('a');
@@ -1883,6 +1957,7 @@ document.querySelectorAll('.filter-chip').forEach(chip => {
 });
 document.getElementById('leadFilter').addEventListener('change', render);
 document.getElementById('statusFilter').addEventListener('change', render);
+document.getElementById('healthFilter').addEventListener('change', render);
 
 function filterSidebar() { renderSidebar(); }
 

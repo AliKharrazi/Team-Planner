@@ -330,6 +330,23 @@ body {
   transform: translate(-50%, -50%) rotate(45deg) scale(1.4);
   box-shadow: 0 0 8px var(--red);
 }
+.milestone-marker-multi {
+  width: 13px;
+  height: 13px;
+  box-shadow: 0 0 0 2px var(--red-dim);
+}
+.milestone-count {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+  pointer-events: none;
+}
 .today-line {
   position: absolute;
   top: 0;
@@ -1228,14 +1245,16 @@ function renderGantt() {
           ${span >= 2 ? t.name : ''}
         </div>`;
       }
-      // Milestones
-      t.milestones.forEach(ms => {
-        if (ms.month === m) {
-          cellContent += `<div class="milestone-marker" style="left:${cellW/2}px;" 
-            onmouseenter="showMsTooltip(event,'${ms.label.replace(/'/g,"\\'")}','${t.name.replace(/'/g,"\\'")}','${MONTHS[ms.month]}\\'26')" 
-            onmouseleave="hideTooltip()"></div>`;
-        }
-      });
+      // Milestones — group all milestones in this month into a single marker
+      const monthMs = t.milestones.filter(ms => ms.month === m);
+      if (monthMs.length) {
+        const labelsJson = JSON.stringify(monthMs.map(ms => ms.label)).replace(/'/g,"\\'").replace(/"/g,'&quot;');
+        const multi = monthMs.length > 1 ? ' milestone-marker-multi' : '';
+        const badge = monthMs.length > 1 ? `<span class="milestone-count">${monthMs.length}</span>` : '';
+        cellContent += `<div class="milestone-marker${multi}" style="left:${cellW/2}px;" 
+          onmouseenter="showMsTooltip(event,'${labelsJson}','${t.name.replace(/'/g,"\\'")}','${MONTHS[m]}\\'26')" 
+          onmouseleave="hideTooltip()">${badge}</div>`;
+      }
       html += `<div class="gantt-cell">${cellContent}</div>`;
     }
     // Lead & Support columns
@@ -1813,13 +1832,26 @@ function showTooltip(e, id) {
   tip.style.top = e.clientY + 12 + 'px';
 }
 function hideTooltip() { document.getElementById('tooltip').style.display = 'none'; }
-function showMsTooltip(e, label, taskName, month) {
+function showMsTooltip(e, labels, taskName, month) {
   const tip = document.getElementById('tooltip');
+  // labels may be a JSON array (one or more) or a plain string (legacy)
+  let list;
+  try {
+    const parsed = JSON.parse(String(labels).replace(/&quot;/g,'"'));
+    list = Array.isArray(parsed) ? parsed : [String(labels)];
+  } catch (err) {
+    list = [String(labels)];
+  }
+  const heading = list.length > 1 ? `Milestones (${list.length})` : 'Milestone';
+  const body = list.map(l =>
+    `<div class="tooltip-title" style="margin-bottom:4px;display:flex;align-items:flex-start;gap:6px;">
+       <span style="color:var(--red);flex-shrink:0;">◆</span><span>${l}</span>
+     </div>`).join('');
   tip.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
     <div style="width:10px;height:10px;background:var(--red);transform:rotate(45deg);flex-shrink:0;"></div>
-    <span style="font-weight:700;font-size:13px;">Milestone</span>
+    <span style="font-weight:700;font-size:13px;">${heading}</span>
   </div>
-  <div class="tooltip-title" style="margin-bottom:4px;">${label}</div>
+  ${body}
   <div class="tooltip-meta">${taskName} · ${month}</div>`;
   tip.style.display = 'block';
   tip.style.left = e.clientX + 14 + 'px';
